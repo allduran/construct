@@ -33,22 +33,28 @@ PanelWindow {
         spacing: Theme.gap
 
         // ── Izquierda: logo + espacios de trabajo ──
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: 14
+        CutPanel {
+            Layout.fillHeight: true
+            cutTopRight: Theme.cut
+            borderColor: Theme.accentDim
 
-            GlitchText {
+            Row {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "CNSTRCT//"
-                color: Theme.accent
-                font.family: Theme.fontDisplay
-                font.pixelSize: Theme.fsLg
-                font.letterSpacing: Theme.tracking
-            }
+                spacing: 14
 
-            Workspaces {
-                anchors.verticalCenter: parent.verticalCenter
-                monitor: Hyprland.monitorFor(bar.screen)
+                GlitchText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "CNSTRCT//"
+                    color: Theme.accent
+                    font.family: Theme.fontDisplay
+                    font.pixelSize: Theme.fsLg
+                    font.letterSpacing: Theme.tracking
+                }
+
+                Workspaces {
+                    anchors.verticalCenter: parent.verticalCenter
+                    monitor: Hyprland.monitorFor(bar.screen)
+                }
             }
         }
 

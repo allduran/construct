@@ -90,6 +90,11 @@ Item {
         }
     }
 
+    // Lanzar un glitch a demanda (p. ej. al abrir un panel)
+    function glitch(): void {
+        burst.restart();
+    }
+
     // Intervalo aleatorio para que no parezca un metrónomo
     Timer {
         interval: root.minInterval

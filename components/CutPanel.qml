@@ -23,8 +23,19 @@ Item {
     // Lo que pongas dentro de CutPanel { } va a 'inner'
     default property alias content: inner.data
 
-    implicitWidth: inner.childrenRect.width + padding * 2
-    implicitHeight: inner.childrenRect.height + padding * 2
+    implicitWidth: contentImplicit("implicitWidth") + padding * 2
+    implicitHeight: contentImplicit("implicitHeight") + padding * 2
+
+    // Tamaño natural del contenido = el mayor de sus hijos visibles.
+    // No usa childrenRect: este depende de la posición de los hijos
+    // y con anchors.verticalCenter provoca un binding loop.
+    function contentImplicit(prop: string): real {
+        let m = 0;
+        for (const c of inner.children)
+            if (c.visible)
+                m = Math.max(m, c[prop]);
+        return m;
+    }
 
     // El trazo se centra en la línea: lo metemos medio grosor hacia dentro
     // para que el borde no se corte en los bordes del Item.

@@ -5,11 +5,12 @@ version = "0.1.0"
 engine = "quickshell"
 
 [packages]
-repo = ["quickshell", "upower", "networkmanager"]
+repo = ["quickshell", "upower", "networkmanager", "wl-clipboard"]
 aur = []
 
 [ipc]
 bar = "qs -c construct ipc call bar toggle"
+launcher = "qs -c construct ipc call launcher toggle"
 
 [conflicts]
 shells = ["velvet", "ancient"]
