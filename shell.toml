@@ -1,0 +1,22 @@
+[shell]
+name = "construct"
+description = "Shell cyberpunk / Matrix para Hyprland: fósforo verde, katakana y esquinas recortadas"
+version = "0.1.0"
+engine = "quickshell"
+
+[packages]
+repo = ["quickshell", "upower", "networkmanager"]
+aur = []
+
+[ipc]
+bar = "qs -c construct ipc call bar toggle"
+
+[conflicts]
+shells = ["velvet", "ancient"]
+
+[hooks]
+install = "hooks/install.sh"
+uninstall = "hooks/uninstall.sh"
+
+[hyprland]
+config = "hypr/shell.lua"
