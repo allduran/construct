@@ -12,6 +12,12 @@ import qs.services
 ShellRoot {
     id: root
     property bool barVisible: true
+    // Fuerza a cargar los ajustes guardados al arrancar
+    readonly property bool settingsLoaded: Settings.loaded
+    // Crea estos servicios al arrancar (si no, la primera tecla se pierde
+    // mientras Pipewire / brightnessctl se inicializan)
+    readonly property bool audioReady: Audio.ready
+    readonly property bool brightnessReady: Brightness.available
 
     Variants {
         model: Quickshell.screens
@@ -21,8 +27,6 @@ ShellRoot {
     }
 
     Launcher {}
-
-    Component.onCompleted: console.log("CALC:", Calc.evaluate("=2^10/4"), Calc.evaluate("sqrt(2)*pi"), Calc.evaluate("hola"), "| CMD:", Commands.search("rein").map(c => c.name))
 
     // duran ipc launcher
     IpcHandler {
@@ -37,6 +41,32 @@ ShellRoot {
         target: "bar"
         function toggle(): void {
             root.barVisible = !root.barVisible;
+        }
+    }
+
+    IpcHandler {
+        target: "audio"
+        function up(): void {
+            console.log("IPC audio.up · ready:", Audio.ready, "· sink:", Audio.sink, "· vol:", Audio.volume);
+            Audio.up();
+        }
+        function down(): void {
+            console.log("IPC audio.down · ready:", Audio.ready, "· vol:", Audio.volume);
+            Audio.down();
+        }
+        function mute(): void {
+            Audio.toggleMute();
+        }
+    }
+
+    IpcHandler {
+        target: "brightness"
+        function up(): void {
+            console.log("IPC bright.up · available:", Brightness.available, "· value:", Brightness.value);
+            Brightness.up();
+        }
+        function down(): void {
+            Brightness.down();
         }
     }
 }

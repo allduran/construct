@@ -5,12 +5,18 @@ version = "0.1.0"
 engine = "quickshell"
 
 [packages]
-repo = ["quickshell", "upower", "networkmanager", "wl-clipboard", "fd", "xdg-utils"]
+repo = ["quickshell", "upower", "networkmanager", "wl-clipboard", "fd", "xdg-utils",
+        "pipewire", "brightnessctl", "bluez-utils", "hyprsunset"]
 aur = []
 
 [ipc]
 bar = "qs -c construct ipc call bar toggle"
 launcher = "qs -c construct ipc call launcher toggle"
+volume_up = "qs -c construct ipc call audio up"
+volume_down = "qs -c construct ipc call audio down"
+volume_mute = "qs -c construct ipc call audio mute"
+bright_up = "qs -c construct ipc call brightness up"
+bright_down = "qs -c construct ipc call brightness down"
 
 [conflicts]
 shells = ["velvet", "ancient"]
