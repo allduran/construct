@@ -56,13 +56,13 @@ Row {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Hyprland.dispatch(`workspace ${chip.wsId}`)
+                onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = "${chip.wsId}" })`)
             }
         }
     }
 
     // Rueda sobre los chips: espacio anterior / siguiente en este monitor
     WheelHandler {
-        onWheel: e => Hyprland.dispatch(e.angleDelta.y > 0 ? "workspace m-1" : "workspace m+1")
+        onWheel: e => Hyprland.dispatch(`hl.dsp.focus({ workspace = "${e.angleDelta.y > 0 ? "m-1" : "m+1"}" })`)
     }
 }

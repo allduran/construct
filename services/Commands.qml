@@ -67,7 +67,7 @@ Singleton {
                 name: "Cerrar sesión",
                 sub: "salir de Hyprland",
                 hint: "SESIÓN",
-                run: () => Hyprland.dispatch("exit")
+                onWheel: e => Hyprland.dispatch(`hl.dsp.focus({ workspace = "${e.angleDelta.y > 0 ? "m-1" : "m+1"}" })`)
             },
             {
                 abbr: "RB",
