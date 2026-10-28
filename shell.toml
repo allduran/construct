@@ -5,7 +5,7 @@ version = "0.1.0"
 engine = "quickshell"
 
 [packages]
-repo = ["quickshell", "upower", "networkmanager", "wl-clipboard"]
+repo = ["quickshell", "upower", "networkmanager", "wl-clipboard", "fd", "xdg-utils"]
 aur = []
 
 [ipc]

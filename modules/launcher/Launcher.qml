@@ -32,13 +32,15 @@ PanelWindow {
     property string query: ""
     property int sel: 0
     property int tab: 0                       // índice en 'tabs'
-    readonly property var tabs: ["APPS", "COMANDOS", "CALC", "WEB"]
+    readonly property var tabs: ["APPS", "COMANDOS", "CALC", "WEB", "ARCHIVOS"]
     readonly property int maxVisible: 7
 
     // Empezar por "=" lleva a CALC sin cambiar de pestaña
     readonly property bool calcMode: tab === 2 || query.startsWith("=")
     // "!g texto" desde cualquier pestaña lleva a WEB
     readonly property bool webMode: !calcMode && (tab === 3 || /^!\S+\s/.test(query))
+    // ":nombre" desde cualquier pestaña lleva a ARCHIVOS
+    readonly property bool filesMode: !calcMode && !webMode && (tab === 4 || query.startsWith(":"))
 
     // Todo se normaliza a { name, sub, icon, abbr, hint, run }:
     // la lista pinta igual apps, comandos y resultados
@@ -58,6 +60,8 @@ PanelWindow {
         }
         if (webMode)
             return Web.results(query);
+        if (filesMode)
+            return Files.results;
         if (tab === 1)
             return Commands.search(query).map(c => ({
                         name: c.name,
@@ -78,7 +82,13 @@ PanelWindow {
     }
     readonly property var current: items[sel] ?? null
 
-    onQueryChanged: sel = 0
+    onQueryChanged: {
+        sel = 0;
+        if (filesMode)
+            Files.search(query);
+    }
+    onFilesModeChanged: if (filesMode)
+        Files.search(query)
     onTabChanged: sel = 0
 
     // 1793043656000 → "14 min"
@@ -294,7 +304,7 @@ PanelWindow {
                             visible: !input.text
                             anchors.verticalCenter: parent.verticalCenter
                             x: 20
-                            text: ["buscar programa…", "buscar comando…", "2^10, sqrt(2)*pi…", "!yt lofi, archlinux.org…"][launcher.tab]
+                            text: ["buscar programa…", "buscar comando…", "2^10, sqrt(2)*pi…", "!yt lofi, archlinux.org…", "nombre de archivo o carpeta…"][launcher.tab]
                             color: Theme.textDim
                             font: input.font
                         }
@@ -342,7 +352,7 @@ PanelWindow {
                         required property string modelData
                         required property int index
                         // Con "=" se marca CALC aunque la pestaña sea otra
-                        readonly property bool on: index === (launcher.calcMode ? 2 : launcher.webMode ? 3 : launcher.tab)
+                        readonly property bool on: index === (launcher.calcMode ? 2 : launcher.webMode ? 3 : launcher.filesMode ? 4 : launcher.tab)
 
                         width: tabLabel.implicitWidth + 36
                         height: 44
@@ -471,7 +481,7 @@ PanelWindow {
                     Text {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        text: row.selected ? (launcher.calcMode ? "↵ COPIAR" : launcher.webMode ? "↵ ABRIR" : "↵ EJECUTAR") : row.modelData.hint
+                        text: row.selected ? (launcher.calcMode ? "↵ COPIAR" : (launcher.webMode || launcher.filesMode) ? "↵ ABRIR" : "↵ EJECUTAR") : row.modelData.hint
                         color: row.selected ? Theme.accent : Theme.textDim
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.fsSm
@@ -483,7 +493,7 @@ PanelWindow {
             // Sin resultados
             Text {
                 visible: launcher.items.length === 0
-                text: launcher.calcMode ? "expresión no válida_" : "sin coincidencias en la matriz_"
+                text: launcher.filesMode && Files.searching ? "rastreando el sistema…" : launcher.calcMode ? "expresión no válida_" : "sin coincidencias en la matriz_"
                 color: Theme.textDim
                 font.family: Theme.fontMono
                 font.pixelSize: Theme.fsMd
@@ -508,7 +518,7 @@ PanelWindow {
                 }
                 Text {
                     anchors.right: parent.right
-                    text: "=2^10 → calc · !yt texto → web"
+                    text: "=2^10 → calc · !yt texto → web · :nombre → archivos"
                     color: Theme.textDim
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fsSm
@@ -519,7 +529,7 @@ PanelWindow {
 
     // ── Recientes: a la derecha del panel, solo en APPS ──
     Column {
-        visible: launcher.tab === 0 && !launcher.calcMode && !launcher.webMode && recentRep.count > 0
+        visible: launcher.tab === 0 && !launcher.calcMode && !launcher.webMode && !launcher.filesMode && recentRep.count > 0
         x: panel.x + panel.width + 40
         y: panel.y + 130
         width: 280
