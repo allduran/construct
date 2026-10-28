@@ -18,6 +18,8 @@ volume_mute = "qs -c construct ipc call audio mute"
 bright_up = "qs -c construct ipc call brightness up"
 bright_down = "qs -c construct ipc call brightness down"
 settings = "qs -c construct ipc call control toggle"
+lock = "qs -c construct ipc call lock lock"
+session = "qs -c construct ipc call session toggle"
 
 [conflicts]
 shells = ["velvet", "ancient"]

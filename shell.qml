@@ -6,6 +6,8 @@ import QtQuick
 import qs.modules.bar
 import qs.modules.launcher
 import qs.modules.control
+import qs.modules.lock
+import qs.modules.session
 import qs.common
 import qs.components
 import qs.services
@@ -29,6 +31,26 @@ ShellRoot {
 
     Launcher {}
     ControlCenter {}
+    LockScreen {}
+    SessionMenu {}
+
+    // duran ipc session
+    IpcHandler {
+        target: "session"
+        function toggle(): void {
+            ShellState.launcherOpen = false;
+            ShellState.controlOpen = false;
+            Session.menuOpen = !Session.menuOpen;
+        }
+    }
+
+    // duran ipc lock
+    IpcHandler {
+        target: "lock"
+        function lock(): void {
+            Lock.lock();
+        }
+    }
 
     // duran ipc launcher
     IpcHandler {

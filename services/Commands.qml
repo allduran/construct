@@ -56,11 +56,18 @@ Singleton {
                 run: () => exec(["hyprctl", "reload"])
             },
             {
+                abbr: "LK",
+                name: "Bloquear",
+                sub: "pantalla de bloqueo",
+                hint: "SESIÓN",
+                run: () => Session.lock()
+            },
+            {
                 abbr: "ZZ",
                 name: "Suspender",
-                sub: "systemctl suspend",
+                sub: "bloquea y suspende",
                 hint: "SESIÓN",
-                run: () => exec(["systemctl", "suspend"])
+                run: () => Session.suspend()
             },
             {
                 abbr: "EX",
@@ -78,10 +85,10 @@ Singleton {
             },
             {
                 abbr: "⏻",
-                name: "Apagar",
-                sub: "systemctl poweroff",
+                name: "Menú de energía",
+                sub: "desconectar //",
                 hint: "SESIÓN",
-                run: () => exec(["systemctl", "poweroff"])
+                run: () => Session.menuOpen = true
             },
         ];
     }
