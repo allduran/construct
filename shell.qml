@@ -5,6 +5,7 @@ import QtQuick
 
 import qs.modules.bar
 import qs.modules.launcher
+import qs.modules.control
 import qs.common
 import qs.components
 import qs.services
@@ -27,11 +28,13 @@ ShellRoot {
     }
 
     Launcher {}
+    ControlCenter {}
 
     // duran ipc launcher
     IpcHandler {
         target: "launcher"
         function toggle(): void {
+            ShellState.controlOpen = false;
             ShellState.launcherOpen = !ShellState.launcherOpen;
         }
     }
@@ -44,14 +47,13 @@ ShellRoot {
         }
     }
 
+    // duran ipc volume_up / volume_down / volume_mute
     IpcHandler {
         target: "audio"
         function up(): void {
-            console.log("IPC audio.up · ready:", Audio.ready, "· sink:", Audio.sink, "· vol:", Audio.volume);
             Audio.up();
         }
         function down(): void {
-            console.log("IPC audio.down · ready:", Audio.ready, "· vol:", Audio.volume);
             Audio.down();
         }
         function mute(): void {
@@ -59,14 +61,23 @@ ShellRoot {
         }
     }
 
+    // duran ipc bright_up / bright_down
     IpcHandler {
         target: "brightness"
         function up(): void {
-            console.log("IPC bright.up · available:", Brightness.available, "· value:", Brightness.value);
             Brightness.up();
         }
         function down(): void {
             Brightness.down();
+        }
+    }
+
+    // duran ipc settings
+    IpcHandler {
+        target: "control"
+        function toggle(): void {
+            ShellState.launcherOpen = false;
+            ShellState.controlOpen = !ShellState.controlOpen;
         }
     }
 }

@@ -18,6 +18,14 @@ Singleton {
     property real netUp: 0        // bytes/s
     property real gpu: 0              // % 0–100 (Intel, vía RC6)
     property bool gpuAvailable: false
+    property real uptime: 0          // segundos desde el arranque
+    // 271964 → "3d 03:32"
+    readonly property string uptimeText: {
+        const d = Math.floor(uptime / 86400);
+        const h = Math.floor(uptime % 86400 / 3600);
+        const m = Math.floor(uptime % 3600 / 60);
+        return (d ? d + "d " : "") + String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+    }
 
     // Lecturas anteriores: CPU y red se calculan como diferencia entre dos muestras
     property var _cpuPrev: null
@@ -35,6 +43,7 @@ Singleton {
             netdev.reload();
             if (root.gpuAvailable)
                 rc6.reload();
+            uptimeFile.reload();
         }
     }
 
@@ -137,6 +146,13 @@ Singleton {
                 t: now
             };
         }
+    }
+
+    // /proc/uptime: "271964.52 1012345.10" → el primer número son los segundos
+    FileView {
+        id: uptimeFile
+        path: "/proc/uptime"
+        onLoaded: root.uptime = Number(text().split(" ")[0])
     }
 
     // 1234567 → "1.2M", 84000 → "82K"

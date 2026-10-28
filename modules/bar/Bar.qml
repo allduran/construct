@@ -81,6 +81,12 @@ PanelWindow {
             Meters {
                 anchors.verticalCenter: parent.verticalCenter
             }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: ShellState.controlOpen = !ShellState.controlOpen
+            }
         }
 
         // ── Bandeja del sistema (solo si hay iconos) ──

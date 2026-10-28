@@ -21,16 +21,15 @@ Singleton {
         if (ready)
             sink.audio.volume = Math.max(0, Math.min(1, v));
     }
+    // Teclas: por wpctl, como velvet. Funciona aunque el sink aún no esté
+    // enganchado y evita los pasos dobles de escribir sink.audio.volume.
     function up() {
-        if (muted)
-            sink.audio.muted = false;     // subir quita el silencio
-        setVolume(volume + 0.05);
+        Quickshell.execDetached(["sh", "-c", "wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"]);
     }
     function down() {
-        setVolume(volume - 0.05);
+        Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"]);
     }
     function toggleMute() {
-        if (ready)
-            sink.audio.muted = !muted;
+        Quickshell.execDetached(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]);
     }
 }
