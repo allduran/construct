@@ -8,6 +8,8 @@ import qs.modules.launcher
 import qs.modules.control
 import qs.modules.lock
 import qs.modules.session
+import qs.modules.notifications
+import qs.modules.osd
 import qs.common
 import qs.components
 import qs.services
@@ -33,6 +35,18 @@ ShellRoot {
     ControlCenter {}
     LockScreen {}
     SessionMenu {}
+    NotificationPopups {}
+    Osd {
+        id: osd
+    }
+
+    // duran ipc notifs_clear
+    IpcHandler {
+        target: "notifs"
+        function clear(): void {
+            Notifs.clearAll();
+        }
+    }
 
     // duran ipc session
     IpcHandler {
@@ -74,12 +88,15 @@ ShellRoot {
         target: "audio"
         function up(): void {
             Audio.up();
+            osd.show("volume");
         }
         function down(): void {
             Audio.down();
+            osd.show("volume");
         }
         function mute(): void {
             Audio.toggleMute();
+            osd.show("volume");
         }
     }
 
@@ -88,9 +105,11 @@ ShellRoot {
         target: "brightness"
         function up(): void {
             Brightness.up();
+            osd.show("brightness");
         }
         function down(): void {
             Brightness.down();
+            osd.show("brightness");
         }
     }
 

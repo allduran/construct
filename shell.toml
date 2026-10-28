@@ -20,6 +20,7 @@ bright_down = "qs -c construct ipc call brightness down"
 settings = "qs -c construct ipc call control toggle"
 lock = "qs -c construct ipc call lock lock"
 session = "qs -c construct ipc call session toggle"
+notifs_clear = "qs -c construct ipc call notifs clear"
 
 [conflicts]
 shells = ["velvet", "ancient"]

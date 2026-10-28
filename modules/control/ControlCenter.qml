@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import qs.common
 import qs.components
 import qs.services
+import qs.modules.notifications
 
 // Panel de control: interruptores, volumen y brillo.
 // (El calendario y las notificaciones se añaden en los pasos siguientes.)
@@ -284,9 +285,74 @@ PanelWindow {
                 Layout.preferredWidth: 1
             }
 
-            // Hueco para el calendario (7c) y las notificaciones (paso 9)
+            // ── Transmisiones: historial de notificaciones ──
             Item {
+                Layout.fillWidth: true
+                implicitHeight: 32
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    textFormat: Text.StyledText
+                    text: `TRANSMISIONES <font color="${Theme.textDim}">· ${Notifs.count}</font>`
+                    color: Theme.accent
+                    font.family: Theme.fontDisplay
+                    font.pixelSize: 13
+                    font.letterSpacing: Theme.tracking
+                }
+
+                CutPanel {
+                    id: purge
+                    visible: Notifs.count > 0
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    padding: 8
+                    cutTopRight: 8
+                    scanlines: false
+                    color: purgeArea.containsMouse ? Qt.alpha(Theme.magenta, 0.15) : "transparent"
+                    borderColor: purgeArea.containsMouse ? Theme.magenta : Theme.accentDim
+
+                    Text {
+                        text: "PURGAR"
+                        color: purgeArea.containsMouse ? Theme.magenta : Theme.textDim
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.fsXs
+                        font.letterSpacing: 1.6
+                    }
+                    MouseArea {
+                        id: purgeArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: Notifs.clearAll()
+                    }
+                }
+            }
+
+            ListView {
+                Layout.fillWidth: true
                 Layout.fillHeight: true
+                clip: true
+                spacing: 8
+                boundsBehavior: Flickable.StopAtBounds
+                // La más nueva arriba
+                model: Notifs.list.slice().reverse()
+
+                delegate: NotifCard {
+                    required property var modelData
+                    notif: modelData
+                    popup: false
+                    width: ListView.view.width
+                }
+
+                // Vacío
+                Text {
+                    visible: parent.count === 0
+                    anchors.centerIn: parent
+                    text: "sin transmisiones · canal limpio_"
+                    color: Theme.textDim
+                    font.family: Theme.fontMono
+                    font.pixelSize: Theme.fsSm
+                }
             }
         }
     }
