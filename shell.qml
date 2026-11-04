@@ -10,6 +10,8 @@ import qs.modules.lock
 import qs.modules.session
 import qs.modules.notifications
 import qs.modules.osd
+import qs.modules.clipboard
+import qs.modules.emoji
 import qs.common
 import qs.components
 import qs.services
@@ -40,6 +42,36 @@ ShellRoot {
         id: osd
     }
 
+    Buffer {}
+    Glyphs {}
+    Reticle {}
+
+    // duran ipc emoji      → retícula (Tab dentro: GLIFOS completo)
+    // duran ipc emoji_all  → GLIFOS directamente
+    IpcHandler {
+        target: "emoji"
+        function toggle(): void {
+            const open = !ShellState.emojiWheelOpen;
+            ShellState.closeAll();
+            ShellState.emojiWheelOpen = open;
+        }
+        function all(): void {
+            const open = !ShellState.emojiOpen;
+            ShellState.closeAll();
+            ShellState.emojiOpen = open;
+        }
+    }
+
+    // duran ipc clipboard
+    IpcHandler {
+        target: "clipboard"
+        function toggle(): void {
+            const open = !ShellState.clipboardOpen;
+            ShellState.closeAll();
+            ShellState.clipboardOpen = open;
+        }
+    }
+
     // duran ipc notifs_clear
     IpcHandler {
         target: "notifs"
@@ -52,9 +84,9 @@ ShellRoot {
     IpcHandler {
         target: "session"
         function toggle(): void {
-            ShellState.launcherOpen = false;
-            ShellState.controlOpen = false;
-            Session.menuOpen = !Session.menuOpen;
+            const open = !Session.menuOpen;
+            ShellState.closeAll();
+            Session.menuOpen = open;
         }
     }
 
@@ -70,8 +102,9 @@ ShellRoot {
     IpcHandler {
         target: "launcher"
         function toggle(): void {
-            ShellState.controlOpen = false;
-            ShellState.launcherOpen = !ShellState.launcherOpen;
+            const open = !ShellState.launcherOpen;
+            ShellState.closeAll();
+            ShellState.launcherOpen = open;
         }
     }
 
@@ -117,8 +150,9 @@ ShellRoot {
     IpcHandler {
         target: "control"
         function toggle(): void {
-            ShellState.launcherOpen = false;
-            ShellState.controlOpen = !ShellState.controlOpen;
+            const open = !ShellState.controlOpen;
+            ShellState.closeAll();
+            ShellState.controlOpen = open;
         }
     }
 }

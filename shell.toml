@@ -6,7 +6,7 @@ engine = "quickshell"
 
 [packages]
 repo = ["quickshell", "upower", "networkmanager", "wl-clipboard", "fd", "xdg-utils",
-        "pipewire", "brightnessctl", "bluez-utils", "hyprsunset"]
+        "pipewire", "brightnessctl", "bluez-utils", "hyprsunset", "cliphist", "wtype", "jq", "noto-fonts-emoji"]
 aur = []
 
 [ipc]
@@ -21,6 +21,9 @@ settings = "qs -c construct ipc call control toggle"
 lock = "qs -c construct ipc call lock lock"
 session = "qs -c construct ipc call session toggle"
 notifs_clear = "qs -c construct ipc call notifs clear"
+clipboard = "qs -c construct ipc call clipboard toggle"
+emoji = "qs -c construct ipc call emoji toggle"
+emoji_all = "qs -c construct ipc call emoji all"
 
 [conflicts]
 shells = ["velvet", "ancient"]
