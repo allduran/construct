@@ -14,6 +14,7 @@ import qs.modules.clipboard
 import qs.modules.emoji
 import qs.modules.capture
 import qs.modules.media
+import qs.modules.wallpaper
 import qs.common
 import qs.components
 import qs.services
@@ -41,6 +42,11 @@ ShellRoot {
         Focus {}
     }
 
+    Variants {
+        model: Quickshell.screens
+        Background {}
+    }
+
     Launcher {}
     ControlCenter {}
     LockScreen {}
@@ -54,6 +60,7 @@ ShellRoot {
     Glyphs {}
     Reticle {}
     MediaPanel {}
+    Signal {}
 
     // duran ipc emoji      → retícula (Tab dentro: GLIFOS completo)
     // duran ipc emoji_all  → GLIFOS directamente
@@ -68,6 +75,28 @@ ShellRoot {
             const open = !ShellState.emojiOpen;
             ShellState.closeAll();
             ShellState.emojiOpen = open;
+        }
+    }
+
+    // duran ipc wallpaper (el selector llega en el 12b)
+    IpcHandler {
+        target: "wallpaper"
+        function setFilter(f: int): void {
+            Wallpapers.filter = f;
+        }
+        function setIntensity(k: real): void {
+            Wallpapers.intensity = k;
+        }
+        function next(): void {
+            const l = Wallpapers.list;
+            const i = l.findIndex(w => w.path === Wallpapers.current);
+            if (l.length)
+                Wallpapers.current = l[(i + 1) % l.length].path;
+        }
+        function toggle(): void {
+            const open = !ShellState.wallpaperOpen;
+            ShellState.closeAll();
+            ShellState.wallpaperOpen = open;
         }
     }
 

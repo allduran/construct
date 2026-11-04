@@ -35,6 +35,7 @@ media_toggle = "qs -c construct ipc call media toggle"
 media_next = "qs -c construct ipc call media next"
 media_prev = "qs -c construct ipc call media previous"
 media_stop = "qs -c construct ipc call media stop"
+wallpaper = "qs -c construct ipc call wallpaper toggle"
 
 [conflicts]
 shells = ["velvet", "ancient"]
