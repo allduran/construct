@@ -6,7 +6,8 @@ engine = "quickshell"
 
 [packages]
 repo = ["quickshell", "upower", "networkmanager", "wl-clipboard", "fd", "xdg-utils",
-        "pipewire", "brightnessctl", "bluez-utils", "hyprsunset", "cliphist", "wtype", "jq", "noto-fonts-emoji"]
+        "pipewire", "brightnessctl", "bluez-utils", "hyprsunset", "cliphist", "wtype", "jq", "noto-fonts-emoji",
+        "grim", "slurp", "wf-recorder", "libnotify", "libpulse"]
 aur = []
 
 [ipc]
@@ -24,6 +25,16 @@ notifs_clear = "qs -c construct ipc call notifs clear"
 clipboard = "qs -c construct ipc call clipboard toggle"
 emoji = "qs -c construct ipc call emoji toggle"
 emoji_all = "qs -c construct ipc call emoji all"
+shot_screen = "qs -c construct ipc call capture screen"
+shot_region = "qs -c construct ipc call capture region"
+shot_window = "qs -c construct ipc call capture window"
+rec_region = "qs -c construct ipc call capture record"
+rec_screen = "qs -c construct ipc call capture recordScreen"
+rec_sound = "qs -c construct ipc call capture recordSound"
+media_toggle = "qs -c construct ipc call media toggle"
+media_next = "qs -c construct ipc call media next"
+media_prev = "qs -c construct ipc call media previous"
+media_stop = "qs -c construct ipc call media stop"
 
 [conflicts]
 shells = ["velvet", "ancient"]

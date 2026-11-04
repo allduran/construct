@@ -12,6 +12,8 @@ import qs.modules.notifications
 import qs.modules.osd
 import qs.modules.clipboard
 import qs.modules.emoji
+import qs.modules.capture
+import qs.modules.media
 import qs.common
 import qs.components
 import qs.services
@@ -33,6 +35,12 @@ ShellRoot {
         }
     }
 
+    // Selector ENFOQUE: uno por monitor (como la barra)
+    Variants {
+        model: Quickshell.screens
+        Focus {}
+    }
+
     Launcher {}
     ControlCenter {}
     LockScreen {}
@@ -45,6 +53,7 @@ ShellRoot {
     Buffer {}
     Glyphs {}
     Reticle {}
+    MediaPanel {}
 
     // duran ipc emoji      → retícula (Tab dentro: GLIFOS completo)
     // duran ipc emoji_all  → GLIFOS directamente
@@ -153,6 +162,46 @@ ShellRoot {
             const open = !ShellState.controlOpen;
             ShellState.closeAll();
             ShellState.controlOpen = open;
+        }
+    }
+
+    // duran ipc shot_* / rec_*
+    IpcHandler {
+        target: "capture"
+        function screen(): void {
+            Capture.run("screen");
+        }
+        function region(): void {
+            Capture.startSelect("area");
+        }
+        function window(): void {
+            Capture.run("window", "");
+        }
+        function record(): void {
+            Capture.startSelect("record-area");
+        }
+        function recordScreen(): void {
+            Capture.run("record-screen");
+        }
+        function recordSound(): void {
+            Capture.run("record-sound");
+        }
+    }
+
+    // duran ipc media_*
+    IpcHandler {
+        target: "media"
+        function toggle(): void {
+            Media.toggle();
+        }
+        function next(): void {
+            Media.next();
+        }
+        function previous(): void {
+            Media.previous();
+        }
+        function stop(): void {
+            Media.stop();
         }
     }
 }

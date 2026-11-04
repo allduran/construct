@@ -71,7 +71,14 @@ PanelWindow {
             }
         }
 
-        // ── Derecha: medidores ──
+        // ── Música y grabación ──
+        MediaChip {
+            Layout.fillHeight: true
+        }
+        RecChip {
+            Layout.fillHeight: true
+        }
+
         // ── Derecha: medidores ──
         CutPanel {
             Layout.fillHeight: true
