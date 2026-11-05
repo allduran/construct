@@ -57,122 +57,6 @@ PanelWindow {
         anchors.fill: panel
     }
 
-    // ── Interruptor: bloque que se rellena de acento al activarse ──
-    component Toggle: CutPanel {
-        id: t
-        required property string label
-        required property string sub
-        required property bool on
-        signal toggled
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 64
-        padding: 14
-        cutTopRight: 12
-        scanlines: false
-        color: on ? Theme.accent : "transparent"
-        borderColor: on ? Theme.accent : Theme.accentDim
-        Behavior on color {
-            ColorAnimation {
-                duration: 120
-            }
-        }
-
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-            width: parent.width
-            spacing: 3
-
-            Text {
-                text: t.label
-                color: t.on ? Theme.accentFg : Theme.text
-                font.family: Theme.fontDisplay
-                font.pixelSize: 13
-                font.letterSpacing: Theme.tracking
-            }
-            Text {
-                width: parent.width
-                elide: Text.ElideRight
-                text: t.sub
-                color: t.on ? Qt.alpha(Theme.accentFg, 0.75) : Theme.textDim
-                font.family: Theme.fontMono
-                font.pixelSize: Theme.fsXs
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: t.toggled()
-        }
-    }
-
-    // ── Slider de bloques: clic, arrastre o rueda ──
-    component BlockSlider: Column {
-        id: s
-        required property string label
-        required property real value          // 0–1
-        property color barColor: Theme.accent
-        property int blocks: 20
-        signal moved(real v)
-
-        Layout.fillWidth: true
-        spacing: 6
-
-        Item {
-            width: parent.width
-            height: lbl.implicitHeight
-            Text {
-                id: lbl
-                text: s.label
-                color: Theme.textDim
-                font.family: Theme.fontMono
-                font.pixelSize: Theme.fsSm
-                font.letterSpacing: 1.6
-            }
-            Text {
-                anchors.right: parent.right
-                text: Math.round(s.value * 100) + "%"
-                color: Theme.textBright
-                font.family: Theme.fontMono
-                font.pixelSize: Theme.fsSm
-            }
-        }
-
-        Item {
-            width: parent.width
-            height: 18
-
-            Row {
-                anchors.fill: parent
-                spacing: 3
-                Repeater {
-                    model: s.blocks
-                    Rectangle {
-                        required property int index
-                        width: (parent.width - (s.blocks - 1) * 3) / s.blocks
-                        height: 18
-                        color: index < Math.round(s.value * s.blocks) ? s.barColor : Theme.track
-                    }
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                function pick(x: real) {
-                    s.moved(Math.max(0, Math.min(1, x / width)));
-                }
-                onPressed: e => pick(e.x)
-                onPositionChanged: e => {
-                    if (pressed)
-                        pick(e.x);
-                }
-                onWheel: w => s.moved(Math.max(0, Math.min(1, s.value + (w.angleDelta.y > 0 ? 0.05 : -0.05))))
-            }
-        }
-    }
-
     // ── Panel ──
     CutPanel {
         id: panel
@@ -198,85 +82,118 @@ PanelWindow {
             anchors.fill: parent
             spacing: 18
 
-            // Cabecera
-            Column {
+            // Cabecera + botón de ajustes
+            RowLayout {
                 Layout.fillWidth: true
-                spacing: 4
+                spacing: 12
 
-                GlitchText {
-                    id: title
-                    text: "NODO // OPERADOR"
-                    color: Theme.accent
-                    font.family: Theme.fontDisplay
-                    font.pixelSize: 22
-                    font.letterSpacing: Theme.tracking
+                Column {
+                    Layout.fillWidth: true
+                    spacing: 4
+                    GlitchText {
+                        id: title
+                        text: "NODO // OPERADOR"
+                        color: Theme.accent
+                        font.family: Theme.fontDisplay
+                        font.pixelSize: 22
+                        font.letterSpacing: Theme.tracking
+                    }
+                    Text {
+                        text: `uptime ${SysStats.uptimeText} · ${Quickshell.env("USER")}`
+                        color: Theme.textDim
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.fsSm
+                    }
                 }
-                Text {
-                    text: `uptime ${SysStats.uptimeText} · ${Quickshell.env("USER")}@${Quickshell.env("HOSTNAME") || "construct"}`
-                    color: Theme.textDim
-                    font.family: Theme.fontMono
-                    font.pixelSize: Theme.fsSm
+
+                CutPanel {
+                    implicitWidth: setRow.implicitWidth + 24
+                    implicitHeight: 44
+                    padding: 0
+                    cutTopRight: 10
+                    scanlines: false
+                    color: setArea.containsMouse ? Qt.alpha(Theme.accent, 0.12) : "transparent"
+                    borderColor: Theme.accentDim
+
+                    Row {
+                        id: setRow
+                        anchors.centerIn: parent
+                        spacing: 8
+                        Text {
+                            text: "⚙"
+                            color: Theme.accent
+                            font.pixelSize: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "AJUSTES"
+                            color: Theme.text
+                            font.family: Theme.fontDisplay
+                            font.pixelSize: 12
+                            font.letterSpacing: 2
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                    MouseArea {
+                        id: setArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            ShellState.closeAll();
+                            ShellState.settingsOpen = true;
+                        }
+                    }
                 }
             }
 
-            // Interruptores
-            GridLayout {
+            // ── Versículo del día ──
+            CutPanel {
                 Layout.fillWidth: true
-                columns: 2
-                columnSpacing: 8
-                rowSpacing: 8
+                Layout.preferredWidth: 1
+                padding: 14
+                cutTopRight: 0
+                cutBottomLeft: 12
+                scanlines: false
+                color: verseArea.containsMouse ? Qt.alpha(Theme.accent, 0.06) : "transparent"
+                borderColor: Theme.accentFaint
 
-                Toggle {
-                    label: "WI-FI"
-                    on: Toggles.wifi
-                    sub: Toggles.wifi ? (Network.ssid || "sin conectar") : "apagado"
-                    onToggled: Toggles.toggleWifi()
-                }
-                Toggle {
-                    label: "BLUETOOTH"
-                    on: Toggles.bluetooth
-                    sub: Toggles.bluetooth ? "encendido" : "apagado"
-                    onToggled: Toggles.toggleBluetooth()
-                }
-                Toggle {
-                    label: "NO MOLESTAR"
-                    on: Toggles.dnd
-                    sub: Toggles.dnd ? "transmisiones en silencio" : "transmisiones abiertas"
-                    onToggled: Toggles.toggleDnd()
-                }
-                Toggle {
-                    label: "LUZ NOCTURNA"
-                    on: Toggles.night
-                    sub: Toggles.night ? `${Toggles.nightTemp} K` : "apagada"
-                    onToggled: Toggles.toggleNight()
-                }
-                Toggle {
-                    label: "LLUVIA"
-                    on: Theme.rain
-                    sub: "katakana en launcher y bloqueo"
-                    onToggled: Theme.rain = !Theme.rain
-                }
-                Toggle {
-                    label: "SCANLINES"
-                    on: Theme.scanlines
-                    sub: "líneas CRT en paneles"
-                    onToggled: Theme.scanlines = !Theme.scanlines
-                }
-            }
+                Column {
+                    width: parent.width
+                    spacing: 6
 
-            // Sliders
-            BlockSlider {
-                label: Audio.muted ? "VOLUMEN · SILENCIO" : "VOLUMEN"
-                value: Audio.muted ? 0 : Audio.volume
-                barColor: Audio.muted ? Theme.magenta : Theme.accent
-                onMoved: v => Audio.setVolume(v)
-            }
-            BlockSlider {
-                visible: Brightness.available
-                label: "BRILLO"
-                value: Brightness.value
-                barColor: Theme.cyan
-                onMoved: v => Brightness.set(v)
+                    Text {
+                        text: `VERSÍCULO // DÍA ${Verse.dayOfYear}`
+                        color: Theme.accent
+                        font.family: Theme.fontDisplay
+                        font.pixelSize: 12
+                        font.letterSpacing: Theme.tracking
+                    }
+                    Text {
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        text: Verse.available ? "«" + Verse.text + "»" : "añade tu RVR1960 en ~/.local/share/construct/biblia/rvr1960.json"
+                        color: Verse.available ? Theme.textBright : Theme.textDim
+                        font.family: Theme.fontMono
+                        font.pixelSize: Verse.available ? Theme.fsMd : Theme.fsXs
+                        lineHeight: 1.3
+                    }
+                    Text {
+                        text: Verse.reference + " · " + Verse.version + (Verse.available ? "   ·   clic: copiar" : "")
+                        color: Theme.textDim
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.fsXs
+                    }
+                }
+
+                MouseArea {
+                    id: verseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    enabled: Verse.available
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Verse.copy()
+                }
             }
 
             Calendar {

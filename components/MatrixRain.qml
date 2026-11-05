@@ -76,7 +76,7 @@ Canvas {
 
     Timer {
         interval: 1000 / root.fps
-        running: root.running && root.visible
+        running: root.running && root.visible && !Theme.gameMode
         repeat: true
         onTriggered: root.requestPaint()
     }

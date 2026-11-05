@@ -7,7 +7,7 @@ engine = "quickshell"
 [packages]
 repo = ["quickshell", "upower", "networkmanager", "wl-clipboard", "fd", "xdg-utils",
         "pipewire", "brightnessctl", "bluez-utils", "hyprsunset", "cliphist", "wtype", "jq", "noto-fonts-emoji",
-        "grim", "slurp", "wf-recorder", "libnotify", "libpulse"]
+        "grim", "slurp", "wf-recorder", "libnotify", "libpulse", "power-profiles-daemon", "gamemode", "hyprpicker"]
 aur = []
 
 [ipc]
@@ -36,6 +36,9 @@ media_next = "qs -c construct ipc call media next"
 media_prev = "qs -c construct ipc call media previous"
 media_stop = "qs -c construct ipc call media stop"
 wallpaper = "qs -c construct ipc call wallpaper toggle"
+mode = "qs -c construct ipc call mode toggle"
+mode_set = "qs -c construct ipc call mode set <modo>"
+color_pick = "qs -c construct ipc call color pick"
 
 [conflicts]
 shells = ["velvet", "ancient"]

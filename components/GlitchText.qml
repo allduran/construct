@@ -98,7 +98,7 @@ Item {
     // Intervalo aleatorio para que no parezca un metrónomo
     Timer {
         interval: root.minInterval
-        running: Theme.glitch && root.visible
+        running: Theme.glitch && root.visible && !Theme.gameMode
         repeat: true
         onTriggered: {
             interval = root.minInterval + Math.random() * (root.maxInterval - root.minInterval);

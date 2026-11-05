@@ -69,4 +69,5 @@ Singleton {
     property bool rain: true    // lluvia de katakana de fondo
     property bool scanlines: true    // líneas CRT sobre los paneles
     property bool glitch: true    // glitch ocasional en títulos
+    property bool gameMode: false // lo cambia el servicio GameMode
 }

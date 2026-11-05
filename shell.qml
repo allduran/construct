@@ -15,6 +15,8 @@ import qs.modules.emoji
 import qs.modules.capture
 import qs.modules.media
 import qs.modules.wallpaper
+import qs.modules.color
+import qs.modules.settings
 import qs.common
 import qs.components
 import qs.services
@@ -24,6 +26,7 @@ ShellRoot {
     property bool barVisible: true
     // Fuerza a cargar los ajustes guardados al arrancar
     readonly property bool settingsLoaded: Settings.loaded
+    readonly property bool gameReady: GameMode.active
     // Crea estos servicios al arrancar (si no, la primera tecla se pierde
     // mientras Pipewire / brightnessctl se inicializan)
     readonly property bool audioReady: Audio.ready
@@ -61,6 +64,16 @@ ShellRoot {
     Reticle {}
     MediaPanel {}
     Signal {}
+    ColorToast {}
+    SettingsWindow {}
+
+    // duran ipc color_pick
+    IpcHandler {
+        target: "color"
+        function pick(): void {
+            Colors.pick();
+        }
+    }
 
     // duran ipc emoji      → retícula (Tab dentro: GLIFOS completo)
     // duran ipc emoji_all  → GLIFOS directamente
@@ -75,6 +88,18 @@ ShellRoot {
             const open = !ShellState.emojiOpen;
             ShellState.closeAll();
             ShellState.emojiOpen = open;
+        }
+    }
+
+    // duran ipc mode / mode_set
+    IpcHandler {
+        target: "mode"
+        function toggle(): void {
+            GameMode.toggle();
+        }
+        // Acepta los nombres de velvet y ancient: game / dire → juego; el resto → normal
+        function set(m: string): void {
+            GameMode.set(["game", "dire", "juego"].includes(m));
         }
     }
 

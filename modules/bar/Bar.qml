@@ -113,5 +113,9 @@ PanelWindow {
         Clock {
             Layout.fillHeight: true
         }
+
+        GameChip {
+            Layout.fillHeight: true
+        }
     }
 }

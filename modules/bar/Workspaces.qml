@@ -12,6 +12,19 @@ Row {
     // Monitor de esta barra: cada barra resalta el espacio activo de SU pantalla
     required property HyprlandMonitor monitor
 
+    // Espacio activo de ESTE monitor según Hyprland (ignora los especiales/scratchpads)
+    readonly property int activeId: monitor?.lastIpcObject?.activeWorkspace?.id ?? monitor?.activeWorkspace?.id ?? -1
+
+    // lastIpcObject solo se actualiza al pedirlo: lo refrescamos en cada cambio de espacio o monitor
+    Connections {
+        target: Hyprland
+        function onRawEvent(e) {
+            if (/^(workspace|focusedmon|moveworkspace|activespecial|monitoradded|monitorremoved)/.test(e.name))
+                Hyprland.refreshMonitors();
+        }
+    }
+    Component.onCompleted: Hyprland.refreshMonitors()
+
     // Mínimo 6; si existe un espacio mayor (p. ej. el 8), se amplía hasta él.
     // Los especiales (scratchpad) tienen id negativo y se ignoran.
     readonly property int count: Math.max(6, ...Hyprland.workspaces.values.filter(w => w.id > 0).map(w => w.id))
@@ -25,7 +38,7 @@ Row {
 
             readonly property int wsId: index + 1
             readonly property var ws: Hyprland.workspaces.values.find(w => w.id === wsId) ?? null
-            readonly property bool active: root.monitor?.activeWorkspace?.id === wsId
+            readonly property bool active: root.activeId === wsId
             readonly property bool urgent: ws?.urgent ?? false
             // Hyprland solo mantiene vivos los espacios con ventanas (o el activo)
             readonly property bool occupied: ws !== null && (ws.toplevels?.values.length ?? 1) > 0

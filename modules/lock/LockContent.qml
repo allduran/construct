@@ -101,7 +101,7 @@ Item {
     // ── Reloj ──
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.16
+        y: parent.height * 0.11
         spacing: 8
 
         Text {
@@ -130,11 +130,41 @@ Item {
         }
     }
 
+    // ── Versículo del día ──
+    Column {
+        visible: Verse.text !== ""
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: parent.height * 0.43
+        width: 900
+        spacing: 10
+
+        Text {
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            maximumLineCount: 3
+            elide: Text.ElideRight
+            text: "«" + Verse.text + "»"
+            color: Theme.text
+            font.family: Theme.fontMono
+            font.pixelSize: 17
+            lineHeight: 1.35
+        }
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: Verse.reference.toUpperCase() + " · " + Verse.version
+            color: Theme.accent
+            font.family: Theme.fontDisplay
+            font.pixelSize: 12
+            font.letterSpacing: Theme.tracking
+        }
+    }
+
     // ── Contraseña ──
     Column {
         id: form
         anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * 0.55
+        y: parent.height * 0.6
         width: 600
         spacing: 12
         transform: Translate {

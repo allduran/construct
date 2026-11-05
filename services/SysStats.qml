@@ -2,13 +2,14 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.common
 
 // Estadísticas del sistema leídas de /proc cada 'interval' ms.
 // Uso: import qs.services  →  SysStats.cpu, SysStats.mem, SysStats.netDown…
 Singleton {
     id: root
 
-    property int interval: 2000
+    property int interval: Theme.gameMode ? 5000 : 2000
 
     property real cpu: 0          // % 0–100
     property real mem: 0          // % 0–100
