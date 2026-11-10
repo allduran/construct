@@ -28,6 +28,8 @@ Singleton {
             property bool rain: true
             property bool scanlines: true
             property bool glitch: true
+            property string cursorTheme: "Construct"
+            property int cursorSize: 24
         }
     }
 
@@ -38,7 +40,27 @@ Singleton {
         Theme.rain = adapter.rain;
         Theme.scanlines = adapter.scanlines;
         Theme.glitch = adapter.glitch;
+        applyCursor();
         loaded = true;
+    }
+
+    readonly property string cursorTheme: adapter.cursorTheme
+    readonly property int cursorSize: adapter.cursorSize
+
+    function setCursor(name: string, size: int): void {
+        adapter.cursorTheme = name;
+        adapter.cursorSize = size;
+        applyCursor();
+    }
+
+    // Hyprland (y XWayland) al momento + apps GTK
+    function applyCursor(): void {
+        if (!adapter.cursorTheme)
+            return;
+        const size = String(adapter.cursorSize);
+        Quickshell.execDetached(["hyprctl", "setcursor", adapter.cursorTheme, size]);
+        Quickshell.execDetached(["gsettings", "set", "org.gnome.desktop.interface", "cursor-theme", adapter.cursorTheme]);
+        Quickshell.execDetached(["gsettings", "set", "org.gnome.desktop.interface", "cursor-size", size]);
     }
 
     Component.onCompleted: Qt.callLater(apply)

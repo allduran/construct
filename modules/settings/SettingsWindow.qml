@@ -8,6 +8,7 @@ import QtQuick.Layouts
 import qs.common
 import qs.components
 import qs.services
+import Quickshell.Io
 
 // AJUSTES //: ventana de ajustes con navegación por secciones.
 PanelWindow {
@@ -47,13 +48,23 @@ PanelWindow {
         },
         {
             title: "APARIENCIA",
-            sub: "efectos y fondo"
+            sub: "efectos, cursor y fondo"
         },
     ]
     property int section: 0
 
     // Salidas de audio reales (sin las corrientes de cada app)
     readonly property var sinks: Pipewire.nodes.values.filter(n => n.isSink && !n.isStream && n.audio)
+
+    property var cursorThemes: []
+
+    Process {
+        id: cursorScan
+        command: ["sh", "-c", 'for d in /usr/share/icons "$HOME/.local/share/icons" "$HOME/.icons"; do for t in "$d"/*/; do ' + '[ -d "$t/cursors" ] && basename "$t"; done; done 2>/dev/null | sort -u']
+        stdout: StdioCollector {
+            onStreamFinished: st.cursorThemes = text.split("\n").filter(l => l && l !== "default")
+        }
+    }
 
     function close() {
         ShellState.settingsOpen = false;
@@ -70,6 +81,7 @@ PanelWindow {
         if (!visible)
             return;
         keys.forceActiveFocus();
+        cursorScan.running = true;
         openAnim.restart();
         title.glitch();
     }
@@ -470,6 +482,67 @@ PanelWindow {
                             on: Theme.glitch
                             sub: "títulos"
                             onToggled: Theme.glitch = !Theme.glitch
+                        }
+                    }
+
+                    Heading {
+                        text: "CURSOR"
+                    }
+                    Flow {
+                        Layout.fillWidth: true
+                        spacing: 6
+
+                        Repeater {
+                            model: st.cursorThemes
+                            delegate: CutPanel {
+                                id: cur
+                                required property string modelData
+                                readonly property bool on: modelData === Settings.cursorTheme
+                                width: curText.implicitWidth + 28
+                                height: 40
+                                padding: 0
+                                cutTopRight: 10
+                                scanlines: false
+                                color: on ? Theme.accent : curArea.containsMouse ? Qt.alpha(Theme.accent, 0.08) : "transparent"
+                                borderColor: on ? Theme.accent : Theme.accentDim
+
+                                Text {
+                                    id: curText
+                                    anchors.centerIn: parent
+                                    text: cur.modelData
+                                    color: cur.on ? Theme.accentFg : Theme.text
+                                    font.family: Theme.fontMono
+                                    font.pixelSize: 13
+                                }
+                                MouseArea {
+                                    id: curArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: Settings.setCursor(cur.modelData, Settings.cursorSize)
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+                        Text {
+                            text: "TAMAÑO"
+                            color: Theme.textDim
+                            font.family: Theme.fontMono
+                            font.pixelSize: Theme.fsSm
+                            font.letterSpacing: 1.6
+                        }
+                        Repeater {
+                            model: [24, 32, 48]
+                            delegate: Choice {
+                                required property int modelData
+                                label: modelData + " px"
+                                on: Settings.cursorSize === modelData
+                                onPicked: Settings.setCursor(Settings.cursorTheme, modelData)
+                            }
                         }
                     }
 

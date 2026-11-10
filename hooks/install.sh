@@ -3,6 +3,11 @@
 # (servicios, grupos, carpetas de estado…). Se ejecuta desde la carpeta del shell.
 set -euo pipefail
 
+# Cursor Construct: enlace a ~/.local/share/icons (se actualiza solo con el repo)
+shell_dir="$(cd "$(dirname "$0")/.." && pwd)"
+mkdir -p "$HOME/.local/share/icons"
+ln -sfn "$shell_dir/assets/cursors/Construct" "$HOME/.local/share/icons/Construct"
+
 echo "construct: install ok"
 
 # construct dibuja el fondo: fuera otros gestores de fondo
