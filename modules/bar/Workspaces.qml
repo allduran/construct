@@ -16,12 +16,23 @@ Row {
     readonly property int activeId: monitor?.lastIpcObject?.activeWorkspace?.id ?? monitor?.activeWorkspace?.id ?? -1
 
     // lastIpcObject solo se actualiza al pedirlo: lo refrescamos en cada cambio de espacio o monitor
+    // Eventos que cambian el espacio activo; se coalescen en un solo refresco (v1 y v2 llegan juntos)
+    readonly property var _refreshOn: ({
+            workspace: 1, workspacev2: 1, focusedmon: 1, focusedmonv2: 1,
+            moveworkspace: 1, moveworkspacev2: 1, activespecial: 1, activespecialv2: 1,
+            monitoradded: 1, monitoraddedv2: 1, monitorremoved: 1
+        })
     Connections {
         target: Hyprland
         function onRawEvent(e) {
-            if (/^(workspace|focusedmon|moveworkspace|activespecial|monitoradded|monitorremoved)/.test(e.name))
-                Hyprland.refreshMonitors();
+            if (e.name in root._refreshOn)
+                refresh.restart();
         }
+    }
+    Timer {
+        id: refresh
+        interval: 30
+        onTriggered: Hyprland.refreshMonitors()
     }
     Component.onCompleted: Hyprland.refreshMonitors()
 
@@ -45,6 +56,7 @@ Row {
 
             width: 38
             height: 30
+            scanlines: false          // 38×30 px: no se distinguen y cada una es un Canvas
             padding: 0
             cutTopRight: Theme.cutSmall
 

@@ -98,169 +98,174 @@ Row {
     }
 
     // ── Menú (ventana emergente anclada a la barra) ──
-    PopupWindow {
-        id: popup
-        visible: root.openItem !== null
-        anchor.window: root.window
-        anchor.rect.x: Math.max(0, Math.min(root.window.width - implicitWidth, root.menuX - 12))
-        anchor.rect.y: root.window.height + 8
-        grabFocus: true                    // clic fuera = se cierra
-        implicitWidth: 300
-        implicitHeight: menuCol.implicitHeight + 24
-        color: "transparent"
+    LazyLoader {
+        active: root.openItem !== null
 
-        onVisibleChanged: if (!visible)
-            root.closeMenu()   // cerrado por clic fuera
+        PopupWindow {
+            id: popup
+            visible: true
+            anchor.window: root.window
+            anchor.rect.x: Math.max(0, Math.min(root.window.width - implicitWidth, root.menuX - 12))
+            anchor.rect.y: root.window.height + 8
+            grabFocus: true                    // clic fuera = se cierra
+            implicitWidth: 300
+            implicitHeight: menuCol.implicitHeight + 24
+            color: "transparent"
 
-        CutPanel {
-            anchors.fill: parent
-            padding: 12
-            cutTopRight: 0
-            cutBottomLeft: 14
-            color: Qt.alpha(Theme.bg, 0.96)
-            borderColor: Theme.accentDim
+            // diferido: no destruir el popup dentro de su propio handler
+            onVisibleChanged: if (!visible)
+                Qt.callLater(root.closeMenu)   // cerrado por clic fuera
 
-            Item {
+            CutPanel {
                 anchors.fill: parent
-                focus: true
-                Keys.onEscapePressed: root.closeMenu()
-            }
+                padding: 12
+                cutTopRight: 0
+                cutBottomLeft: 14
+                color: Qt.alpha(Theme.bg, 0.96)
+                borderColor: Theme.accentDim
 
-            Column {
-                id: menuCol
-                width: popup.implicitWidth - 24
-                spacing: 2
-
-                // Cabecera: nombre de la app, o "←" para volver del submenú
                 Item {
-                    width: parent.width
-                    height: 30
+                    anchors.fill: parent
+                    focus: true
+                    Keys.onEscapePressed: root.closeMenu()
+                }
 
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
+                Column {
+                    id: menuCol
+                    width: popup.implicitWidth - 24
+                    spacing: 2
+
+                    // Cabecera: nombre de la app, o "←" para volver del submenú
+                    Item {
                         width: parent.width
-                        elide: Text.ElideRight
-                        text: root.openItem ? (root.menuStack.length ? "← " : "") + root.nameOf(root.openItem).toUpperCase() : ""
-                        color: Theme.accent
-                        font.family: Theme.fontDisplay
-                        font.pixelSize: 12
-                        font.letterSpacing: Theme.tracking
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: root.menuStack.length > 0
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: root.menuStack = root.menuStack.slice(0, -1)
-                    }
-                }
-                Rectangle {
-                    width: parent.width
-                    height: 1
-                    color: Theme.accentFaint
-                }
+                        height: 30
 
-                Repeater {
-                    model: opener.children
-
-                    delegate: Item {
-                        id: entry
-                        required property QsMenuEntry modelData
-                        readonly property bool isCheck: modelData.buttonType === QsMenuButtonType.CheckBox
-                        readonly property bool isRadio: modelData.buttonType === QsMenuButtonType.RadioButton
-                        readonly property bool checked: modelData.checkState === Qt.Checked
-
-                        width: menuCol.width
-                        height: modelData.isSeparator ? 9 : 34
-
-                        // Separador
-                        Rectangle {
-                            visible: entry.modelData.isSeparator
+                        Text {
                             anchors.verticalCenter: parent.verticalCenter
                             width: parent.width
-                            height: 1
-                            color: Theme.accentFaint
+                            elide: Text.ElideRight
+                            text: root.openItem ? (root.menuStack.length ? "← " : "") + root.nameOf(root.openItem).toUpperCase() : ""
+                            color: Theme.accent
+                            font.family: Theme.fontDisplay
+                            font.pixelSize: 12
+                            font.letterSpacing: Theme.tracking
                         }
-
-                        // Fila
-                        Rectangle {
-                            visible: !entry.modelData.isSeparator
+                        MouseArea {
                             anchors.fill: parent
-                            color: rowArea.containsMouse && entry.modelData.enabled ? Qt.alpha(Theme.accent, 0.12) : "transparent"
-                            opacity: entry.modelData.enabled ? 1 : 0.4
+                            enabled: root.menuStack.length > 0
+                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: root.menuStack = root.menuStack.slice(0, -1)
+                        }
+                    }
+                    Rectangle {
+                        width: parent.width
+                        height: 1
+                        color: Theme.accentFaint
+                    }
 
-                            Row {
+                    Repeater {
+                        model: opener.children
+
+                        delegate: Item {
+                            id: entry
+                            required property QsMenuEntry modelData
+                            readonly property bool isCheck: modelData.buttonType === QsMenuButtonType.CheckBox
+                            readonly property bool isRadio: modelData.buttonType === QsMenuButtonType.RadioButton
+                            readonly property bool checked: modelData.checkState === Qt.Checked
+
+                            width: menuCol.width
+                            height: modelData.isSeparator ? 9 : 34
+
+                            // Separador
+                            Rectangle {
+                                visible: entry.modelData.isSeparator
                                 anchors.verticalCenter: parent.verticalCenter
-                                x: 8
-                                spacing: 10
+                                width: parent.width
+                                height: 1
+                                color: Theme.accentFaint
+                            }
 
-                                // Casilla / radio / icono / hueco
-                                Item {
+                            // Fila
+                            Rectangle {
+                                visible: !entry.modelData.isSeparator
+                                anchors.fill: parent
+                                color: rowArea.containsMouse && entry.modelData.enabled ? Qt.alpha(Theme.accent, 0.12) : "transparent"
+                                opacity: entry.modelData.enabled ? 1 : 0.4
+
+                                Row {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: 16
-                                    height: 16
+                                    x: 8
+                                    spacing: 10
+
+                                    // Casilla / radio / icono / hueco
+                                    Item {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 16
+                                        height: 16
+
+                                        Text {
+                                            visible: entry.isCheck || entry.isRadio
+                                            anchors.centerIn: parent
+                                            text: entry.isRadio ? (entry.checked ? "●" : "○") : (entry.checked ? "■" : "□")
+                                            color: entry.checked ? Theme.accent : Theme.textDim
+                                            font.pixelSize: 12
+                                        }
+                                        IconImage {
+                                            visible: !entry.isCheck && !entry.isRadio && entry.modelData.icon !== ""
+                                            anchors.fill: parent
+                                            source: entry.modelData.icon
+                                        }
+                                    }
 
                                     Text {
-                                        visible: entry.isCheck || entry.isRadio
-                                        anchors.centerIn: parent
-                                        text: entry.isRadio ? (entry.checked ? "●" : "○") : (entry.checked ? "■" : "□")
-                                        color: entry.checked ? Theme.accent : Theme.textDim
-                                        font.pixelSize: 12
-                                    }
-                                    IconImage {
-                                        visible: !entry.isCheck && !entry.isRadio && entry.modelData.icon !== ""
-                                        anchors.fill: parent
-                                        source: entry.modelData.icon
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: menuCol.width - 16 - 10 - 8 - 24
+                                        elide: Text.ElideRight
+                                        text: root.clean(entry.modelData.text)
+                                        color: rowArea.containsMouse ? Theme.textBright : Theme.text
+                                        font.family: Theme.fontMono
+                                        font.pixelSize: 13
                                     }
                                 }
 
                                 Text {
+                                    visible: entry.modelData.hasChildren
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 8
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: menuCol.width - 16 - 10 - 8 - 24
-                                    elide: Text.ElideRight
-                                    text: root.clean(entry.modelData.text)
-                                    color: rowArea.containsMouse ? Theme.textBright : Theme.text
-                                    font.family: Theme.fontMono
-                                    font.pixelSize: 13
+                                    text: "›"
+                                    color: Theme.accent
+                                    font.pixelSize: 16
                                 }
-                            }
 
-                            Text {
-                                visible: entry.modelData.hasChildren
-                                anchors.right: parent.right
-                                anchors.rightMargin: 8
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: "›"
-                                color: Theme.accent
-                                font.pixelSize: 16
-                            }
-
-                            MouseArea {
-                                id: rowArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                enabled: entry.modelData.enabled
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (entry.modelData.hasChildren) {
-                                        root.menuStack = [...root.menuStack, entry.modelData];
-                                        return;
+                                MouseArea {
+                                    id: rowArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    enabled: entry.modelData.enabled
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (entry.modelData.hasChildren) {
+                                            root.menuStack = [...root.menuStack, entry.modelData];
+                                            return;
+                                        }
+                                        entry.modelData.triggered();
+                                        root.closeMenu();
                                     }
-                                    entry.modelData.triggered();
-                                    root.closeMenu();
                                 }
                             }
                         }
                     }
-                }
 
-                // Menú vacío (algunas apps tardan un instante en mandarlo)
-                Text {
-                    visible: opener.children.values.length === 0
-                    topPadding: 6
-                    text: "sin opciones_"
-                    color: Theme.textDim
-                    font.family: Theme.fontMono
-                    font.pixelSize: Theme.fsSm
+                    // Menú vacío (algunas apps tardan un instante en mandarlo)
+                    Text {
+                        visible: opener.children.values.length === 0
+                        topPadding: 6
+                        text: "sin opciones_"
+                        color: Theme.textDim
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.fsSm
+                    }
                 }
             }
         }

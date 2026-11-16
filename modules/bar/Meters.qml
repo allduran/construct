@@ -49,12 +49,13 @@ Row {
             color: Theme.track
 
             Rectangle {
-                width: parent.width * Math.min(1, m.value / 100)
+                width: Math.round(parent.width * Math.min(1, m.value / 100))
                 height: parent.height
                 color: m.barColor
                 Behavior on width {
+                    enabled: !Theme.gameMode
                     NumberAnimation {
-                        duration: 400
+                        duration: 150
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -85,8 +86,16 @@ Row {
     }
 
     // ── Red ──
+    // Ancho fijo (peor caso, fuente mono) para no relayoutar la barra en cada muestra
+    TextMetrics {
+        id: netMetrics
+        font.family: Theme.fontMono
+        font.pixelSize: Theme.fsSm
+        text: "NET ↓0000.0M ↑0000.0M"
+    }
     Text {
         anchors.verticalCenter: parent.verticalCenter
+        width: Math.ceil(netMetrics.advanceWidth)
         textFormat: Text.StyledText
         text: `NET <font color="${Theme.text}">↓${SysStats.rate(SysStats.netDown)} ↑${SysStats.rate(SysStats.netUp)}</font>`
         color: Theme.textDim

@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Wayland
 import QtQuick
 import qs.common
@@ -12,6 +13,10 @@ Item {
     // "org.kde.dolphin" → "DOLPHIN"
     readonly property string app: win?.appId ? win.appId.split(".").pop().toUpperCase() : "IDLE"
     readonly property string title: win?.title || "esperando instrucciones…"
+
+    // Medios ciclos de parpadeo que quedan (par: termina encendido)
+    property int blinks: 16
+    onTitleChanged: blinks = 16
 
     Row {
         anchors.centerIn: parent
@@ -55,13 +60,19 @@ Item {
             height: 16
             color: Theme.accent
 
-            // Parpadeo tipo terminal. Se usa opacity y no visible
-            // para que el Row no recoloque nada al apagarse.
+            // Parpadeo tipo terminal, solo unos ciclos tras cambiar el título;
+            // luego queda fijo, como un prompt en reposo. Se usa opacity y no
+            // visible para que el Row no recoloque nada al apagarse.
             Timer {
                 interval: 530
-                running: true
+                running: root.blinks > 0 && root.visible && !Theme.gameMode && (root.QsWindow.window?.visible ?? true)
                 repeat: true
-                onTriggered: cursor.opacity = cursor.opacity > 0 ? 0 : 1
+                onTriggered: {
+                    cursor.opacity = cursor.opacity > 0 ? 0 : 1;
+                    root.blinks--;
+                }
+                onRunningChanged: if (!running)
+                    cursor.opacity = 1
             }
         }
     }

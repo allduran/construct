@@ -20,7 +20,7 @@ CutPanel {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 12
 
-        // Mini ecualizador: se mueve solo si suena
+        // Mini ecualizador a saltos (~7 fps, tipo VU-meter digital): se mueve solo si suena
         Item {
             anchors.verticalCenter: parent.verticalCenter
             width: 5 * 4 + 4 * 3
@@ -30,30 +30,29 @@ CutPanel {
                 anchors.bottom: parent.bottom
                 spacing: 3
                 Repeater {
-                    model: [0.7, 0.5, 0.9, 0.6, 0.8]
+                    id: eq
+                    model: 5
                     Rectangle {
-                        id: bar
-                        required property real modelData
                         anchors.bottom: parent.bottom
                         width: 4
                         height: 5
                         color: Theme.accent
-
-                        SequentialAnimation on height {
-                            running: chip.playing && chip.visible
-                            loops: Animation.Infinite
-                            NumberAnimation {
-                                to: 18
-                                duration: bar.modelData * 500
-                                easing.type: Easing.InOutSine
-                            }
-                            NumberAnimation {
-                                to: 5
-                                duration: bar.modelData * 500
-                                easing.type: Easing.InOutSine
-                            }
-                        }
                     }
+                }
+            }
+
+            Timer {
+                interval: 140
+                repeat: true
+                running: chip.playing && chip.visible && !Theme.gameMode
+                onTriggered: {
+                    for (let i = 0; i < eq.count; i++)
+                        eq.itemAt(i).height = 5 + Math.round(Math.random() * 13);
+                }
+                // Al pararse (pausa, modo juego), las barras vuelven a reposo
+                onRunningChanged: if (!running) {
+                    for (let i = 0; i < eq.count; i++)
+                        eq.itemAt(i).height = 5;
                 }
             }
         }
