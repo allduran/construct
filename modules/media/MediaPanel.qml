@@ -164,8 +164,8 @@ PanelWindow {
                                 text: (tab.modelData.identity || "?").toUpperCase()
                                 color: tab.on ? Theme.accentFg : Theme.textDim
                                 font.family: Theme.fontDisplay
-                                font.pixelSize: 11
-                                font.letterSpacing: 1.6
+                                font.pixelSize: Theme.fsXs
+                                font.letterSpacing: Theme.trackingSm
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -248,7 +248,7 @@ PanelWindow {
                         color: Theme.accent
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.fsXs
-                        font.letterSpacing: 1.6
+                        font.letterSpacing: Theme.trackingSm
                     }
                 }
             }
@@ -357,9 +357,9 @@ PanelWindow {
                         Rectangle {
                             required property int index
                             anchors.bottom: parent.bottom
-                            width: (500 - 40 - 47 * 3) / 48
+                            width: (parent.parent.width - (viz.count - 1) * 3) / viz.count
                             height: 6
-                            color: index < 14 ? Theme.accent : Qt.alpha(Theme.accent, 0.35)
+                            color: index < Math.round(Media.progress * viz.count) ? Theme.accent : Qt.alpha(Theme.accent, 0.35)
                         }
                     }
                 }

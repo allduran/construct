@@ -344,7 +344,7 @@ PanelWindow {
                         color: Theme.accent
                         font.family: Theme.fontDisplay
                         font.pixelSize: Theme.fsSm
-                        font.letterSpacing: 2
+                        font.letterSpacing: Theme.tracking
                     }
                 }
             }

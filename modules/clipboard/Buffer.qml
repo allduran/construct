@@ -116,7 +116,7 @@ PanelWindow {
             color: ab.primary ? Theme.accentFg : ab.danger ? Theme.magentaText : Theme.text
             font.family: Theme.fontDisplay
             font.pixelSize: Theme.fsSm
-            font.letterSpacing: 2
+            font.letterSpacing: Theme.tracking
         }
         MouseArea {
             id: abArea
@@ -260,6 +260,30 @@ PanelWindow {
                     currentIndex: buf.sel
                     onCurrentIndexChanged: positionViewAtIndex(currentIndex, ListView.Contain)
 
+                    // Superficie continua bajo las filas (entre fila y fila no se lee lo de debajo)
+                    Rectangle {
+                        parent: list
+                        anchors.fill: parent
+                        z: -1
+                        color: Qt.alpha(Theme.bg, 0.94)
+                    }
+                    // Degradado inferior: hay más filas por debajo
+                    Rectangle {
+                        parent: list
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                            bottom: parent.bottom
+                        }
+                        height: 24
+                        z: 2
+                        visible: !list.atYEnd
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "transparent" }
+                            GradientStop { position: 1; color: Qt.alpha(Theme.bg, 0.94) }
+                        }
+                    }
+
                     delegate: CutPanel {
                         id: row
                         required property var modelData
@@ -308,8 +332,8 @@ PanelWindow {
                                         text: row.modelData.kind
                                         color: buf.kindColor(row.modelData.kind)
                                         font.family: Theme.fontDisplay
-                                        font.pixelSize: 11
-                                        font.letterSpacing: 1.5
+                                        font.pixelSize: Theme.fsXs
+                                        font.letterSpacing: Theme.trackingSm
                                     }
                                 }
                             }
@@ -487,7 +511,7 @@ PanelWindow {
                                                     color: Theme.textDim
                                                     font.family: Theme.fontMono
                                                     font.pixelSize: Theme.fsXs
-                                                    font.letterSpacing: 1.6
+                                                    font.letterSpacing: Theme.trackingSm
                                                 }
                                                 Text {
                                                     text: modelData.v
@@ -511,7 +535,7 @@ PanelWindow {
                                     color: Theme.textDim
                                     font.family: Theme.fontMono
                                     font.pixelSize: Theme.fsSm
-                                    font.letterSpacing: 2
+                                    font.letterSpacing: Theme.trackingSm
                                 }
                                 Text {
                                     width: parent.width

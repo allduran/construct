@@ -109,10 +109,8 @@ PanelWindow {
                 }
 
                 CutPanel {
-                    implicitWidth: setRow.implicitWidth + 24
-                    implicitHeight: 44
-                    padding: 0
-                    cutTopRight: Theme.cutTab
+                    padding: 8
+                    cutTopRight: Theme.cutSmall
                     scanlines: false
                     color: setArea.containsMouse ? Qt.alpha(Theme.accent, 0.12) : "transparent"
                     borderColor: Theme.accentDim
@@ -132,8 +130,8 @@ PanelWindow {
                             text: "AJUSTES"
                             color: Theme.text
                             font.family: Theme.fontDisplay
-                            font.pixelSize: Theme.fsSm
-                            font.letterSpacing: 2
+                            font.pixelSize: Theme.fsXs
+                            font.letterSpacing: Theme.trackingSm
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -236,7 +234,7 @@ PanelWindow {
                         color: purgeArea.containsMouse ? Theme.magenta : Theme.textDim
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.fsXs
-                        font.letterSpacing: 1.6
+                        font.letterSpacing: Theme.trackingSm
                     }
                     MouseArea {
                         id: purgeArea

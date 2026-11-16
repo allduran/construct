@@ -429,9 +429,10 @@ PanelWindow {
                     spacing: 10
 
                     BlockSlider {
-                        label: Audio.muted ? "VOLUMEN · SILENCIO" : "VOLUMEN"
-                        value: Audio.muted ? 0 : Audio.volume
-                        barColor: Audio.muted ? Theme.yellow : Theme.accent
+                        label: "VOLUMEN"
+                        value: Audio.volume
+                        valueText: (Audio.muted ? "SILENCIO · " : "") + Math.round(Audio.volume * 100) + "%"
+                        barColor: Audio.muted ? Qt.alpha(Theme.yellow, 0.35) : Theme.accent
                         onMoved: v => Audio.setVolume(v)
                     }
                     Toggle {
@@ -535,7 +536,7 @@ PanelWindow {
                             color: Theme.textDim
                             font.family: Theme.fontMono
                             font.pixelSize: Theme.fsSm
-                            font.letterSpacing: 1.6
+                            font.letterSpacing: Theme.trackingSm
                         }
                         Repeater {
                             model: [24, 32, 48]
@@ -605,7 +606,7 @@ PanelWindow {
                                     color: Theme.accentFg
                                     font.family: Theme.fontDisplay
                                     font.pixelSize: Theme.fsSm
-                                    font.letterSpacing: 2
+                                    font.letterSpacing: Theme.tracking
                                 }
                                 MouseArea {
                                     anchors.fill: parent

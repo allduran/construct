@@ -14,6 +14,8 @@ Item {
     property var shown: items
     onItemsChanged: if (items.length > 0)
         shown = items
+    else
+        shown = shown.filter(n => n)         // sin objetos ya destruidos (la app cerró la notificación)
     property bool popup: true
 
     readonly property bool stacked: shown.length > 1
@@ -43,7 +45,7 @@ Item {
             padding: 0
             scanlines: false
             cutTopRight: 0
-            cutBottomLeft: 4
+            cutBottomLeft: Theme.cutXs
             color: Qt.alpha(Theme.bg, 0.94)
             borderColor: Qt.alpha(first.tone, 0.6 - index * 0.25)
             z: -1 - index
@@ -89,7 +91,7 @@ Item {
         }
     }
 
-    // Contador "▾ +N" en la esquina inferior derecha (indica que se despliega)
+    // Contador "▼ +N" en la esquina inferior derecha (indica que se despliega)
     CutPanel {
         visible: grp.stacked && !grp.expanded
         anchors.right: parent.right
@@ -99,16 +101,26 @@ Item {
         height: badge.implicitHeight + 4
         padding: 0
         scanlines: false
-        cutTopRight: Theme.cutSmall / 2
+        cutTopRight: Theme.cutXs
         color: Theme.bg
         borderColor: first.tone
-        Text {
+        Row {
             id: badge
             anchors.centerIn: parent
-            text: `▾ +${grp.shown.length - 1}`
-            color: first.tone
-            font.family: Theme.fontMono
-            font.pixelSize: Theme.fsXs
+            spacing: 4
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "▼"
+                color: first.tone
+                font.family: Theme.fontMono
+                font.pixelSize: Theme.fsXs - 2
+            }
+            Text {
+                text: `+${grp.shown.length - 1}`
+                color: first.tone
+                font.family: Theme.fontMono
+                font.pixelSize: Theme.fsXs
+            }
         }
     }
 }

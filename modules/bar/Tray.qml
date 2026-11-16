@@ -120,7 +120,7 @@ Row {
                 anchors.fill: parent
                 padding: 12
                 cutTopRight: 0
-                cutBottomLeft: 14
+                cutBottomLeft: Theme.cut
                 color: Qt.alpha(Theme.bg, 0.96)
                 borderColor: Theme.accentDim
 

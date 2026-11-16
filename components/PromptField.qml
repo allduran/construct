@@ -78,7 +78,7 @@ CutPanel {
             color: Theme.textDim
             font.family: Theme.fontMono
             font.pixelSize: Theme.fsSm
-            font.letterSpacing: 2
+            font.letterSpacing: Theme.trackingSm
         }
     }
 }

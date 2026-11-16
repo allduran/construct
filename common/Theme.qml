@@ -63,15 +63,18 @@ Singleton {
     // Espaciado de etiquetas tipo HUD
     readonly property real tracking: 2.4   // font.letterSpacing en títulos
     readonly property real trackingWide: 6   // tracking de títulos de overlays
+    readonly property real trackingSm: 1.6   // etiquetas mono en mayúsculas
 
     // ── Geometría ──────────────────────────────────────
     readonly property int cut: 14   // tamaño del recorte de esquina en paneles
+    readonly property int cutXs: 4       // láminas y contador de las pilas de notificaciones
     readonly property int cutSmall: 8    // botones, chips
     readonly property int cutTab: 10    // pestañas y botones secundarios
     readonly property int cutLg: 22    // paneles grandes, buscadores y paneles de la barra
     readonly property int gap: 10   // separación entre módulos
     readonly property int pad: 14   // padding interior de paneles
     readonly property int barHeight: 46
+    readonly property int tabHeight: 44   // alto de las pestañas (TabChip)
     readonly property int border: 1
 
     // Overlays: velo y lluvia comunes

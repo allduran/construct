@@ -236,9 +236,9 @@ PanelWindow {
                     x: p.x - width / 2
                     y: p.y - height / 2
                     text: "0" + (sec.index + 1)
-                    color: sec.on ? Theme.accent : Qt.alpha(Theme.textDim, 0.6)
+                    color: sec.on ? Theme.accent : Theme.textDim
                     font.family: Theme.fontMono
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.fsXs
                     font.weight: Font.DemiBold
                 }
 
@@ -307,8 +307,8 @@ PanelWindow {
                 text: ret.hovered >= 0 ? String(45 * ret.hovered).padStart(3, "0") + "°" : "TODOS"
                 color: Theme.accent
                 font.family: Theme.fontMono
-                font.pixelSize: 11
-                font.letterSpacing: 1.6
+                font.pixelSize: Theme.fsXs
+                font.letterSpacing: Theme.trackingSm
             }
         }
     }
@@ -383,7 +383,8 @@ PanelWindow {
         id: help
         // Debajo del disco si cabe; si no, encima
         readonly property bool below: ret.cy + disc.c + 40 < ret.height
-        anchors.horizontalCenter: parent.horizontalCenter
+        // Centrada en el disco, sin salirse de la pantalla
+        x: Math.max(24, Math.min(ret.width - width - 24, ret.cx - width / 2))
         y: below ? ret.cy + disc.c + 12 : ret.cy - disc.c - height - 12
         visible: ret.placed
         textFormat: Text.StyledText
@@ -391,6 +392,6 @@ PanelWindow {
         color: Theme.textDim
         font.family: Theme.fontMono
         font.pixelSize: Theme.fsSm
-        font.letterSpacing: 1.4
+        font.letterSpacing: Theme.trackingSm
     }
 }

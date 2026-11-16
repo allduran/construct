@@ -57,7 +57,7 @@ CutPanel {
             color: Theme.magentaText
             font.family: Theme.fontDisplay
             font.pixelSize: Theme.fsBase
-            font.letterSpacing: 2
+            font.letterSpacing: Theme.tracking
         }
     }
 

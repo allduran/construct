@@ -44,7 +44,7 @@ CutPanel {
                 font.family: Theme.fontMono
                 font.pixelSize: Theme.fsXs
                 font.weight: Font.DemiBold
-                font.letterSpacing: 1.4
+                font.letterSpacing: Theme.trackingSm
             }
             Text {
                 text: Qt.formatDate(clock.date, "dd·MM·yy")

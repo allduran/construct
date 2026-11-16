@@ -8,6 +8,8 @@ Column {
     property string label: ""
     required property real value
     property color barColor: Theme.accent
+    property color trackColor: Theme.track     // bloques vacíos (sobre imágenes, una superficie opaca)
+    property color trackBorder: "transparent"
     property int blocks: 20
     property string valueText: Math.round(value * 100) + "%"
     property bool interactive: true       // false: solo indicador (OSD)
@@ -29,7 +31,7 @@ Column {
             color: Theme.textDim
             font.family: Theme.fontMono
             font.pixelSize: Theme.fsSm
-            font.letterSpacing: 1.6
+            font.letterSpacing: Theme.trackingSm
         }
         Text {
             anchors.right: parent.right
@@ -53,7 +55,10 @@ Column {
                     required property int index
                     width: (parent.width - (s.blocks - 1) * 3) / s.blocks
                     height: s.blockHeight
-                    color: index < Math.round(s.value * s.blocks) ? s.barColor : Theme.track
+                    readonly property bool lit: index < Math.round(s.value * s.blocks)
+                    color: lit ? s.barColor : s.trackColor
+                    border.width: lit ? 0 : 1
+                    border.color: s.trackBorder
                     Behavior on color {
                         ColorAnimation {
                             duration: 80

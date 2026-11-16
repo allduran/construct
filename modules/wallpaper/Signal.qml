@@ -135,8 +135,10 @@ PanelWindow {
     }
 
     // ── Fondo: el escritorio actual, oscurecido ──
+    // Deja libre la franja de la barra: se ve atenuada por el velo, como en el resto de overlays
     WallImage {
         anchors.fill: parent
+        anchors.topMargin: 12 + Theme.barHeight + 12
         source: Wallpapers.current ? "file://" + Wallpapers.current : ""
         filter: Wallpapers.filter
         intensity: Wallpapers.intensity
@@ -274,8 +276,8 @@ PanelWindow {
                     text: "◆ EN USO"
                     color: Theme.accentFg
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 11
-                    font.letterSpacing: 2
+                    font.pixelSize: Theme.fsXs
+                    font.letterSpacing: Theme.tracking
                 }
             }
             MouseArea {
@@ -310,42 +312,13 @@ PanelWindow {
                     spacing: 6
                     Repeater {
                         model: Wallpapers.filterNames
-                        delegate: CutPanel {
-                            id: fc
+                        delegate: TabChip {
                             required property string modelData
                             required property int index
-                            readonly property bool on: index === sg.filter
-                            width: fcRow.implicitWidth + 28
-                            height: 44
-                            padding: 0
-                            cutTopRight: Theme.cutTab
-                            scanlines: false
-                            color: on ? Theme.accent : "transparent"
-                            borderColor: on ? Theme.accent : Theme.accentDim
-                            Row {
-                                id: fcRow
-                                anchors.centerIn: parent
-                                spacing: 6
-                                Text {
-                                    text: fc.index + 1
-                                    opacity: 0.6
-                                    color: fc.on ? Theme.accentFg : Theme.accent
-                                    font.family: Theme.fontDisplay
-                                    font.pixelSize: Theme.fsSm
-                                }
-                                Text {
-                                    text: fc.modelData
-                                    color: fc.on ? Theme.accentFg : Theme.textDim
-                                    font.family: Theme.fontDisplay
-                                    font.pixelSize: Theme.fsSm
-                                    font.letterSpacing: 2
-                                }
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: sg.filter = fc.index
-                            }
+                            prefix: String(index + 1)
+                            label: modelData
+                            on: index === sg.filter
+                            onClicked: sg.filter = index
                         }
                     }
                 }
@@ -366,7 +339,7 @@ PanelWindow {
                         color: Theme.accentFg
                         font.family: Theme.fontDisplay
                         font.pixelSize: Theme.fsBase
-                        font.letterSpacing: 2
+                        font.letterSpacing: Theme.tracking
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -389,7 +362,7 @@ PanelWindow {
                     color: Theme.textDim
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fsSm
-                    font.letterSpacing: 1.6
+                    font.letterSpacing: Theme.trackingSm
                 }
                 BlockSlider {
                     width: parent.width - 110 - 48 - parent.spacing * 2
@@ -397,6 +370,8 @@ PanelWindow {
                     wheelable: false
                     interactive: sg.filter !== 0
                     value: sg.intensity
+                    trackColor: Qt.alpha(Theme.bg, 0.85)
+                    trackBorder: Theme.accentFaint
                     // Pasos de 1/20, mínimo 0.05
                     onMoved: v => sg.intensity = Math.max(0.05, Math.min(1, Math.ceil(v * 20) / 20))
                 }

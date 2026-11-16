@@ -156,12 +156,14 @@ Singleton {
         onLoaded: root.uptime = Number(text().split(" ")[0])
     }
 
-    // 1234567 → "1.2M", 84000 → "82K"
+    // 1234567 → "1.2M", 84000 → "82K": como mucho 4 caracteres (999B, 12K, 999K, 1.2M, 120M)
     function rate(b: real): string {
-        if (b >= 1048576)
-            return (b / 1048576).toFixed(1) + "M";
-        if (b >= 1024)
-            return Math.round(b / 1024) + "K";
-        return Math.round(b) + "B";
+        const u = ["B", "K", "M", "G"];
+        let i = 0;
+        while (b >= 1000 && i < 3) {
+            b /= 1024;
+            i++;
+        }
+        return (b < 10 && i > 0 ? b.toFixed(1) : Math.round(b)) + u[i];
     }
 }

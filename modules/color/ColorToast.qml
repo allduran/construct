@@ -126,7 +126,7 @@ PanelWindow {
                     color: Colors.isLight(toast.hex || "#000000") ? Theme.accentFg : Theme.textBright
                     font.family: Theme.fontDisplay
                     font.pixelSize: 26
-                    font.letterSpacing: 2
+                    font.letterSpacing: Theme.tracking
                 }
             }
 
@@ -157,7 +157,7 @@ PanelWindow {
                                 color: fmt.justCopied ? Theme.accent : Theme.textDim
                                 font.family: Theme.fontMono
                                 font.pixelSize: Theme.fsXs
-                                font.letterSpacing: 1.4
+                                font.letterSpacing: Theme.trackingSm
                             }
                             Text {
                                 width: fmt.width - 20
@@ -194,7 +194,7 @@ PanelWindow {
                     color: Theme.textDim
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fsXs
-                    font.letterSpacing: 1.4
+                    font.letterSpacing: Theme.trackingSm
                 }
                 Flow {
                     width: parent.width
@@ -246,8 +246,8 @@ PanelWindow {
                         text: "OTRO COLOR"
                         color: Theme.accentFg
                         font.family: Theme.fontDisplay
-                        font.pixelSize: 11
-                        font.letterSpacing: 2
+                        font.pixelSize: Theme.fsXs
+                        font.letterSpacing: Theme.tracking
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -273,8 +273,8 @@ PanelWindow {
                         text: "EXPORTAR .gpl"
                         color: Theme.text
                         font.family: Theme.fontDisplay
-                        font.pixelSize: 11
-                        font.letterSpacing: 2
+                        font.pixelSize: Theme.fsXs
+                        font.letterSpacing: Theme.tracking
                     }
                     MouseArea {
                         anchors.fill: parent

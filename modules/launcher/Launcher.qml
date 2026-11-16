@@ -283,7 +283,6 @@ PanelWindow {
                         // Con "=" se marca CALC aunque la pestaña sea otra
                         on: index === (launcher.calcMode ? 2 : launcher.webMode ? 3 : launcher.filesMode ? 4 : launcher.tab)
                         label: modelData
-                        height: 44
                         onClicked: {
                             launcher.tab = index;
                             field.input.forceActiveFocus();   // seguir escribiendo tras el clic
@@ -303,6 +302,30 @@ PanelWindow {
                 model: launcher.items
                 currentIndex: launcher.sel
                 onCurrentIndexChanged: positionViewAtIndex(currentIndex, ListView.Contain)
+
+                // Superficie continua bajo las filas (entre fila y fila no se lee lo de debajo)
+                Rectangle {
+                    parent: list
+                    anchors.fill: parent
+                    z: -1
+                    color: Qt.alpha(Theme.bg, 0.94)
+                }
+                // Degradado inferior: hay más filas por debajo
+                Rectangle {
+                    parent: list
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                    height: 24
+                    z: 2
+                    visible: !list.atYEnd
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: "transparent" }
+                        GradientStop { position: 1; color: Qt.alpha(Theme.bg, 0.94) }
+                    }
+                }
 
                 delegate: CutPanel {
                     id: row
@@ -395,7 +418,7 @@ PanelWindow {
                         color: row.selected ? Theme.accent : Theme.textDim
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.fsSm
-                        font.letterSpacing: 1.6
+                        font.letterSpacing: Theme.trackingSm
                     }
                 }
             }

@@ -29,7 +29,7 @@ Item {
             color: Theme.textDim
             font.family: Theme.fontMono
             font.pixelSize: Theme.fsXs
-            font.letterSpacing: 2
+            font.letterSpacing: Theme.trackingSm
         }
 
         Text {

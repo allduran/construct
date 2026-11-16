@@ -19,6 +19,12 @@ Item {
         id: metrics
         text: "0"
     }
+    // Un Text que solo contiene un espacio mide 0: el espacio toma el avance real
+    TextMetrics {
+        id: spaceMetrics
+        font: metrics.font
+        text: " "
+    }
 
     Row {
         id: row
@@ -32,7 +38,7 @@ Item {
                 readonly property string ch: root.text.charAt(index)
                 readonly property bool digit: ch >= "0" && ch <= "9"
 
-                width: digit ? root.digitWidth : glyph.implicitWidth
+                width: digit ? root.digitWidth : ch === " " ? Math.ceil(spaceMetrics.advanceWidth) : glyph.implicitWidth
                 height: glyph.implicitHeight
 
                 Text {

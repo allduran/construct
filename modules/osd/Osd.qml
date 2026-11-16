@@ -15,9 +15,6 @@ PanelWindow {
     visible: shown || fade.running          // sigue visible mientras se desvanece
 
     function show(k: string): void {
-        if (ShellState.controlOpen)
-            // con el panel abierto ya se ven los sliders
-            return;
         kind = k;
         fade.stop();
         if (!shown)
@@ -43,9 +40,9 @@ PanelWindow {
     color: "transparent"
 
     readonly property bool isVol: kind === "volume"
-    readonly property real value: isVol ? (Audio.muted ? 0 : Audio.volume) : Brightness.value
+    readonly property real value: isVol ? Audio.volume : Brightness.value
     readonly property color tone: isVol ? (Audio.muted ? Theme.yellow : Theme.accent) : Theme.cyan
-    readonly property string label: isVol ? (Audio.muted ? "VOLUMEN · SILENCIO" : "VOLUMEN") : "BRILLO"
+    readonly property string label: isVol ? "VOLUMEN" : "BRILLO"
 
     Timer {
         id: hideTimer
@@ -88,7 +85,7 @@ PanelWindow {
                 Text {
                     anchors.right: parent.right
                     anchors.baseline: lbl.baseline
-                    text: Math.round(osd.value * 100) + "%"
+                    text: (osd.isVol && Audio.muted ? "SILENCIO · " : "") + Math.round(osd.value * 100) + "%"
                     color: Theme.textBright
                     font.family: Theme.fontDisplay
                     font.pixelSize: 16
@@ -101,7 +98,7 @@ PanelWindow {
                 interactive: false
                 blockHeight: 14
                 value: osd.value
-                barColor: osd.tone
+                barColor: osd.isVol && Audio.muted ? Qt.alpha(Theme.yellow, 0.35) : osd.tone
             }
         }
     }

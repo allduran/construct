@@ -252,7 +252,7 @@ Item {
                     color: Theme.textDim
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fsSm
-                    font.letterSpacing: 1.6
+                    font.letterSpacing: Theme.trackingSm
                 }
             }
         }

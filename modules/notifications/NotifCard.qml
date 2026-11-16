@@ -17,16 +17,16 @@ CutPanel {
     property var group: null             // notificaciones de su grupo: al caducar se ocultan todas
     property bool held: false            // el grupo está desplegado: no caduca
 
-    readonly property bool critical: notif.urgency === NotificationUrgency.Critical
-    readonly property color tone: critical ? Theme.magenta : notif.urgency === NotificationUrgency.Low ? Theme.textDim : Theme.accent
-    readonly property var defaultAction: notif.actions.find(a => a.identifier === "default") ?? null
-    readonly property var buttons: notif.actions.filter(a => a.identifier !== "default")
-    readonly property string image: notif.image || (notif.appIcon ? Quickshell.iconPath(notif.appIcon, true) : "")
+    readonly property bool critical: notif?.urgency === NotificationUrgency.Critical
+    readonly property color tone: critical ? Theme.magenta : notif?.urgency === NotificationUrgency.Low ? Theme.textDim : Theme.accent
+    readonly property var defaultAction: notif?.actions.find(a => a.identifier === "default") ?? null
+    readonly property var buttons: notif?.actions.filter(a => a.identifier !== "default") ?? []
+    readonly property string image: notif?.image || (notif?.appIcon ? Quickshell.iconPath(notif.appIcon, true) : "")
 
     width: 420
     padding: 14
     cutTopRight: 0
-    cutBottomLeft: 14
+    cutBottomLeft: Theme.cut
     color: critical ? Theme.surfaceCritical : Qt.alpha(Theme.bg, 0.94)
     borderColor: tone
 
@@ -68,14 +68,17 @@ CutPanel {
         if (notif === card._lastNotif)
             return;
         card._lastNotif = notif;
-        expire.restart();
+        // Solo reinicia la cuenta si ya corría: restart() arrancaría el Timer aunque
+        // `running` sea falso (crítica, hover, grupo desplegado) y la ocultaría.
+        if (expire.running)
+            expire.restart();
         if (animateIn)
             enter.restart();
     }
 
     Timer {
         id: expire
-        interval: card.notif.expireTimeout > 0 ? card.notif.expireTimeout : 6000
+        interval: (card.notif?.expireTimeout ?? 0) > 0 ? card.notif.expireTimeout : 6000
         running: card.popup && !card.critical && !hover.hovered && !card.held
         onTriggered: Notifs.hidePopups(card.group ?? [card.notif])
     }
@@ -92,14 +95,14 @@ CutPanel {
             Text {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
-                text: (card.notif.appName || "SISTEMA").toUpperCase()
+                text: (card.notif?.appName || "SISTEMA").toUpperCase()
                 color: card.tone
                 font.family: Theme.fontDisplay
                 font.pixelSize: Theme.fsSm
                 font.letterSpacing: Theme.tracking
             }
             Text {
-                text: Qt.formatTime(new Date(Notifs.times[card.notif.id] ?? Date.now()), "HH:mm")
+                text: Qt.formatTime(new Date(Notifs.times[card.notif?.id] ?? Date.now()), "HH:mm")
                 color: Theme.textDim
                 font.family: Theme.fontMono
                 font.pixelSize: Theme.fsXs
@@ -141,7 +144,7 @@ CutPanel {
 
                 Text {
                     Layout.fillWidth: true
-                    text: card.notif.summary
+                    text: card.notif?.summary ?? ""
                     color: Theme.textBright
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fsMd
@@ -152,7 +155,7 @@ CutPanel {
                 Text {
                     Layout.fillWidth: true
                     visible: text !== ""
-                    text: card.notif.body
+                    text: card.notif?.body ?? ""
                     textFormat: Text.StyledText          // negritas y enlaces que manden las apps
                     color: Theme.text
                     linkColor: Theme.cyan
@@ -188,7 +191,7 @@ CutPanel {
                         color: card.tone
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.fsXs
-                        font.letterSpacing: 1.2
+                        font.letterSpacing: Theme.trackingSm
                     }
                     MouseArea {
                         id: btnArea

@@ -342,7 +342,7 @@ PanelWindow {
                     color: Theme.accentFg
                     font.family: Theme.fontDisplay
                     font.pixelSize: Theme.fsSm
-                    font.letterSpacing: 2
+                    font.letterSpacing: Theme.tracking
                 }
             }
             Rectangle {
@@ -358,7 +358,7 @@ PanelWindow {
                     color: sel.tone
                     font.family: Theme.fontDisplay
                     font.pixelSize: Theme.fsSm
-                    font.letterSpacing: 2
+                    font.letterSpacing: Theme.tracking
                     SequentialAnimation on opacity {
                         running: sel.isRec && sel.visible
                         loops: Animation.Infinite
@@ -520,7 +520,7 @@ PanelWindow {
                             color: chip.on ? Theme.accentFg : Theme.textDim
                             font.family: Theme.fontDisplay
                             font.pixelSize: Theme.fsSm
-                            font.letterSpacing: 2
+                            font.letterSpacing: Theme.tracking
                         }
                     }
                     MouseArea {
@@ -551,7 +551,7 @@ PanelWindow {
                     color: sel.audio ? Theme.magentaText : Theme.textDim
                     font.family: Theme.fontDisplay
                     font.pixelSize: Theme.fsSm
-                    font.letterSpacing: 2
+                    font.letterSpacing: Theme.tracking
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -580,7 +580,7 @@ PanelWindow {
             color: Theme.textDim
             font.family: Theme.fontMono
             font.pixelSize: Theme.fsSm
-            font.letterSpacing: 1.2
+            font.letterSpacing: Theme.trackingSm
         }
     }
 

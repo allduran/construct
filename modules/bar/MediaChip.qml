@@ -13,6 +13,28 @@ CutPanel {
     // Barra estrecha: solo título, sin artista (la ventana activa tiene prioridad)
     property bool compact: false
 
+    // Anchos naturales, independientes de lo que el layout le dé (así la barra puede
+    // decidir "compact" con ellos sin bucles). Texto: como mucho 220 px.
+    readonly property string title: (p?.trackTitle ?? "").trim()
+    readonly property string artist: (p?.trackArtist ?? "").trim()
+    readonly property real chrome: padding * 2 + 32 + 12 * 2 + playGlyph.implicitWidth   // todo salvo el texto
+    readonly property real minWidth: chrome                                              // eq + ▶
+    readonly property real fullWidth: chrome + Math.min(fullMetrics.advanceWidth, 220)
+    readonly property real compactWidth: chrome + Math.min(titleMetrics.advanceWidth, 220)
+    implicitWidth: compact ? compactWidth : fullWidth
+
+    TextMetrics {
+        id: fullMetrics
+        font.family: Theme.fontMono
+        font.pixelSize: Theme.fsBase
+        text: chip.title + (chip.title && chip.artist ? " — " + chip.artist : "")
+    }
+    TextMetrics {
+        id: titleMetrics
+        font: fullMetrics.font
+        text: chip.title || "SIN DATOS"
+    }
+
     visible: Media.active
     padding: 14
     cutTopRight: 0
@@ -65,21 +87,23 @@ CutPanel {
             anchors.verticalCenter: parent.verticalCenter
             readonly property string t: (chip.p?.trackTitle ?? "").trim()
             readonly property string a: (chip.p?.trackArtist ?? "").trim()
-            width: Math.min(implicitWidth, 220)
+            // Cede al ancho que el layout le da al chip (el título se elide)
+            width: Math.max(0, Math.min(implicitWidth, 220, chip.width - chip.chrome))
             elide: Text.ElideRight
             textFormat: Text.StyledText
-            text: (t || "SIN SEÑAL").replace(/</g, "&lt;") + (t && a && !chip.compact ? ` <font color="${Theme.textDim}">— ${a.replace(/</g, "&lt;")}</font>` : "")
-            color: Theme.text
+            text: (t || "SIN DATOS").replace(/</g, "&lt;") + (t && a && !chip.compact ? ` <font color="${Theme.textDim}">— ${a.replace(/</g, "&lt;")}</font>` : "")
+            color: t ? Theme.text : Theme.textDim
             font.family: Theme.fontMono
             font.pixelSize: Theme.fsBase
         }
 
         Text {
+            id: playGlyph
             anchors.verticalCenter: parent.verticalCenter
             text: chip.playing ? "▶" : "❚❚"
             color: Theme.accent
             font.family: Theme.fontMono
-            font.pixelSize: 11
+            font.pixelSize: Theme.fsXs
         }
     }
 

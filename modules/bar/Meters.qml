@@ -82,7 +82,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         label: "GPU"
         value: SysStats.gpu
-        barColor: SysStats.gpu >= 85 ? Theme.magenta : Theme.cyan
+        barColor: SysStats.gpu >= 60 ? root.levelColor(SysStats.gpu) : Theme.cyan
     }
 
     // ── Red ──
@@ -91,7 +91,7 @@ Row {
         id: rateMetrics
         font.family: Theme.fontMono
         font.pixelSize: Theme.fsSm
-        text: "↓000.0M"
+        text: "↓000M"
     }
     Row {
         anchors.verticalCenter: parent.verticalCenter
