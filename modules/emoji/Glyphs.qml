@@ -42,10 +42,10 @@ PanelWindow {
     onTabChanged: sel = 0
 
     function opened() {
-        input.text = "";
+        field.input.text = "";
         tab = 0;
         sel = 0;
-        input.forceActiveFocus();
+        field.input.forceActiveFocus();
         openAnim.restart();
         title.glitch();
     }
@@ -81,12 +81,12 @@ PanelWindow {
     MatrixRain {
         id: rain
         anchors.fill: parent
-        opacity: 0.5
+        opacity: Theme.rainOpacity
         running: Theme.rain && gl.visible
     }
     Rectangle {
         anchors.fill: parent
-        color: Qt.alpha(Theme.bg, 0.66)
+        color: Qt.alpha(Theme.bg, Theme.veil)
     }
     MouseArea {
         anchors.fill: parent
@@ -100,8 +100,8 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height * 0.11
         padding: 24
-        cutTopRight: 24
-        cutBottomLeft: 24
+        cutTopRight: Theme.cutLg
+        cutBottomLeft: Theme.cutLg
         color: Qt.alpha(Theme.bg, 0.94)
         borderColor: Theme.accentDim
         transform: Translate {
@@ -127,8 +127,8 @@ PanelWindow {
                     text: "GLIFOS //"
                     color: Theme.accent
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 36
-                    font.letterSpacing: 6
+                    font.pixelSize: Theme.fsHero
+                    font.letterSpacing: Theme.trackingWide
                 }
                 Text {
                     anchors.right: parent.right
@@ -143,85 +143,33 @@ PanelWindow {
             }
 
             // Buscador
-            CutPanel {
+            PromptField {
+                id: field
                 width: parent.width
-                height: 56
-                padding: 18
-                cutTopRight: 16
-                cutBottomLeft: 16
-                scanlines: false
-                color: Theme.bg
-                borderColor: Theme.accent
-
-                Row {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
-                    spacing: 12
-
-                    Text {
-                        id: gt
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: ">"
-                        color: Theme.accent
-                        font.family: Theme.fontMono
-                        font.pixelSize: 22
-                    }
-
-                    TextInput {
-                        id: input
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width - gt.width - parent.spacing
-                        color: Theme.textBright
-                        selectionColor: Theme.accentDim
-                        font.family: Theme.fontMono
-                        font.pixelSize: 18
-                        clip: true
-                        onTextChanged: gl.query = text
-
-                        cursorDelegate: Rectangle {
-                            id: caret
-                            width: 10
-                            color: Theme.accent
-                            Timer {
-                                interval: 530
-                                running: input.activeFocus
-                                repeat: true
-                                onTriggered: caret.opacity = caret.opacity > 0 ? 0 : 1
-                            }
-                        }
-
-                        Text {
-                            visible: !input.text
-                            anchors.verticalCenter: parent.verticalCenter
-                            x: 16
-                            text: "buscar glifo… fuego, risa, gato"
-                            color: Theme.textDim
-                            font: input.font
-                        }
-
-                        Keys.onPressed: e => {
-                            const n = Emoji.groups.length;
-                            if (e.key === Qt.Key_Escape)
-                                gl.close();
-                            else if (e.key === Qt.Key_Right)
-                                gl.move(1);
-                            else if (e.key === Qt.Key_Left)
-                                gl.move(-1);
-                            else if (e.key === Qt.Key_Down)
-                                gl.move(gl.cols);
-                            else if (e.key === Qt.Key_Up)
-                                gl.move(-gl.cols);
-                            else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter)
-                                gl.pick(gl.current?.e ?? "", !(e.modifiers & Qt.ShiftModifier));
-                            else if (e.key === Qt.Key_Tab && !gl.searching)
-                                gl.tab = (gl.tab + 1) % n;
-                            else if (e.key === Qt.Key_Backtab && !gl.searching)
-                                gl.tab = (gl.tab + n - 1) % n;
-                            else
-                                return;
-                            e.accepted = true;
-                        }
-                    }
+                placeholder: "buscar glifo… fuego, risa, gato"
+                hint: "ESC"
+                onTextChanged: gl.query = text
+                onKeyPressed: e => {
+                    const n = Emoji.groups.length;
+                    if (e.key === Qt.Key_Escape)
+                        gl.close();
+                    else if (e.key === Qt.Key_Right)
+                        gl.move(1);
+                    else if (e.key === Qt.Key_Left)
+                        gl.move(-1);
+                    else if (e.key === Qt.Key_Down)
+                        gl.move(gl.cols);
+                    else if (e.key === Qt.Key_Up)
+                        gl.move(-gl.cols);
+                    else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter)
+                        gl.pick(gl.current?.e ?? "", !(e.modifiers & Qt.ShiftModifier));
+                    else if (e.key === Qt.Key_Tab && !gl.searching)
+                        gl.tab = (gl.tab + 1) % n;
+                    else if (e.key === Qt.Key_Backtab && !gl.searching)
+                        gl.tab = (gl.tab + n - 1) % n;
+                    else
+                        return;
+                    e.accepted = true;
                 }
             }
 
@@ -235,7 +183,7 @@ PanelWindow {
                     text: "FRECUENTES"
                     color: Theme.textDim
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.fsSm
                     font.letterSpacing: Theme.tracking
                 }
                 Row {
@@ -276,36 +224,15 @@ PanelWindow {
 
                 Repeater {
                     model: Emoji.groups
-                    delegate: CutPanel {
+                    delegate: TabChip {
                         id: gt2
                         required property var modelData
                         required property int index
-                        readonly property bool on: index === gl.tab
-
-                        width: gtText.implicitWidth + 28
-                        height: 40
-                        padding: 0
-                        cutTopRight: 10
-                        scanlines: false
-                        color: on ? Theme.accent : "transparent"
-                        borderColor: on ? Theme.accent : Theme.accentDim
-
-                        Text {
-                            id: gtText
-                            anchors.centerIn: parent
-                            text: gt2.modelData[1]
-                            color: gt2.on ? Theme.accentFg : Theme.textDim
-                            font.family: Theme.fontDisplay
-                            font.pixelSize: 12
-                            font.letterSpacing: 2
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                gl.tab = gt2.index;
-                                input.forceActiveFocus();
-                            }
+                        on: index === gl.tab
+                        label: modelData[1]
+                        onClicked: {
+                            gl.tab = index;
+                            field.input.forceActiveFocus();
                         }
                     }
                 }
@@ -416,7 +343,7 @@ PanelWindow {
                         text: "↵ ESCRIBIR · ⇧↵ COPIAR"
                         color: Theme.accent
                         font.family: Theme.fontDisplay
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.fsSm
                         font.letterSpacing: 2
                     }
                 }

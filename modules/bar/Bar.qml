@@ -63,6 +63,8 @@ PanelWindow {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.preferredWidth: 1     // no pide ancho por su contenido: solo el hueco libre
+            Layout.minimumWidth: 180     // APP ▸ + unas letras + cursor
+            clip: true                   // nunca pinta fuera de su chaflán
             cutTopRight: 0
             borderColor: Theme.accentFaint
 
@@ -74,6 +76,7 @@ PanelWindow {
         // ── Música y grabación ──
         MediaChip {
             Layout.fillHeight: true
+            compact: bar.width < 1700    // en barras estrechas, la música cede (sin artista)
         }
         RecChip {
             Layout.fillHeight: true

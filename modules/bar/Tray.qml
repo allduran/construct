@@ -147,7 +147,7 @@ Row {
                             text: root.openItem ? (root.menuStack.length ? "← " : "") + root.nameOf(root.openItem).toUpperCase() : ""
                             color: Theme.accent
                             font.family: Theme.fontDisplay
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fsSm
                             font.letterSpacing: Theme.tracking
                         }
                         MouseArea {
@@ -204,11 +204,12 @@ Row {
                                         height: 16
 
                                         Text {
+                                            font.family: Theme.fontMono
                                             visible: entry.isCheck || entry.isRadio
                                             anchors.centerIn: parent
                                             text: entry.isRadio ? (entry.checked ? "●" : "○") : (entry.checked ? "■" : "□")
                                             color: entry.checked ? Theme.accent : Theme.textDim
-                                            font.pixelSize: 12
+                                            font.pixelSize: Theme.fsSm
                                         }
                                         IconImage {
                                             visible: !entry.isCheck && !entry.isRadio && entry.modelData.icon !== ""
@@ -224,11 +225,12 @@ Row {
                                         text: root.clean(entry.modelData.text)
                                         color: rowArea.containsMouse ? Theme.textBright : Theme.text
                                         font.family: Theme.fontMono
-                                        font.pixelSize: 13
+                                        font.pixelSize: Theme.fsBase
                                     }
                                 }
 
                                 Text {
+                                    font.family: Theme.fontMono
                                     visible: entry.modelData.hasChildren
                                     anchors.right: parent.right
                                     anchors.rightMargin: 8

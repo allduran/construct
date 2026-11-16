@@ -115,7 +115,7 @@ PanelWindow {
         Layout.topMargin: 6
         color: Theme.textDim
         font.family: Theme.fontDisplay
-        font.pixelSize: 12
+        font.pixelSize: Theme.fsSm
         font.letterSpacing: Theme.tracking
     }
 
@@ -130,7 +130,7 @@ PanelWindow {
         Layout.fillWidth: true
         implicitHeight: sub ? 56 : 44
         padding: 12
-        cutTopRight: 10
+        cutTopRight: Theme.cutTab
         scanlines: false
         color: on ? Qt.alpha(Theme.accent, 0.14) : chArea.containsMouse ? Qt.alpha(Theme.accent, 0.06) : "transparent"
         borderColor: on ? Theme.accent : Theme.accentFaint
@@ -189,8 +189,8 @@ PanelWindow {
         height: 640
         anchors.centerIn: parent
         padding: 0
-        cutTopRight: 24
-        cutBottomLeft: 24
+        cutTopRight: Theme.cutLg
+        cutBottomLeft: Theme.cutLg
         color: Qt.alpha(Theme.bg, 0.96)
         borderColor: Theme.accentDim
         transform: Translate {
@@ -260,7 +260,7 @@ PanelWindow {
                                 text: nav.modelData.title
                                 color: nav.on ? Theme.accentFg : Theme.text
                                 font.family: Theme.fontDisplay
-                                font.pixelSize: 13
+                                font.pixelSize: Theme.fsBase
                                 font.letterSpacing: Theme.tracking
                             }
                         }
@@ -431,7 +431,7 @@ PanelWindow {
                     BlockSlider {
                         label: Audio.muted ? "VOLUMEN · SILENCIO" : "VOLUMEN"
                         value: Audio.muted ? 0 : Audio.volume
-                        barColor: Audio.muted ? Theme.magenta : Theme.accent
+                        barColor: Audio.muted ? Theme.yellow : Theme.accent
                         onMoved: v => Audio.setVolume(v)
                     }
                     Toggle {
@@ -503,7 +503,7 @@ PanelWindow {
                                 width: curText.implicitWidth + 28
                                 height: 40
                                 padding: 0
-                                cutTopRight: 10
+                                cutTopRight: Theme.cutTab
                                 scanlines: false
                                 color: on ? Theme.accent : curArea.containsMouse ? Qt.alpha(Theme.accent, 0.08) : "transparent"
                                 borderColor: on ? Theme.accent : Theme.accentDim
@@ -514,7 +514,7 @@ PanelWindow {
                                     text: cur.modelData
                                     color: cur.on ? Theme.accentFg : Theme.text
                                     font.family: Theme.fontMono
-                                    font.pixelSize: 13
+                                    font.pixelSize: Theme.fsBase
                                 }
                                 MouseArea {
                                     id: curArea
@@ -555,7 +555,7 @@ PanelWindow {
                         Layout.fillWidth: true
                         implicitHeight: 120
                         padding: 0
-                        cutTopRight: 14
+                        cutTopRight: Theme.cut
                         scanlines: false
                         color: "transparent"
                         borderColor: Theme.accentDim
@@ -604,7 +604,7 @@ PanelWindow {
                                     text: "ABRIR SEÑAL"
                                     color: Theme.accentFg
                                     font.family: Theme.fontDisplay
-                                    font.pixelSize: 12
+                                    font.pixelSize: Theme.fsSm
                                     font.letterSpacing: 2
                                 }
                                 MouseArea {

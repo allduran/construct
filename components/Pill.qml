@@ -12,7 +12,7 @@ Rectangle {
     property string sub: ""
     signal clicked
 
-    readonly property color tone: red ? "#ff3b3b" : "#3d7bff"
+    readonly property color tone: red ? Theme.pillRed : Theme.pillBlue
 
     width: 340
     height: 88

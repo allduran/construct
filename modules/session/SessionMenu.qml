@@ -91,12 +91,12 @@ PanelWindow {
     MatrixRain {
         id: rain
         anchors.fill: parent
-        opacity: 0.6
+        opacity: Theme.rainOpacity
         running: Theme.rain && menu.visible
     }
     Rectangle {
         anchors.fill: parent
-        color: Qt.alpha(Theme.bg, 0.6)
+        color: Qt.alpha(Theme.bg, Theme.veil)
     }
     MouseArea {
         anchors.fill: parent
@@ -185,7 +185,7 @@ PanelWindow {
                             text: btn.modelData.label
                             color: Theme.text
                             font.family: Theme.fontDisplay
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.fsBase
                             font.letterSpacing: Theme.tracking
                         }
                     }

@@ -10,6 +10,9 @@ CutPanel {
     readonly property var p: Media.player
     readonly property bool playing: p?.isPlaying ?? false
 
+    // Barra estrecha: solo título, sin artista (la ventana activa tiene prioridad)
+    property bool compact: false
+
     visible: Media.active
     padding: 14
     cutTopRight: 0
@@ -60,19 +63,22 @@ CutPanel {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            width: Math.min(implicitWidth, 300)
+            readonly property string t: (chip.p?.trackTitle ?? "").trim()
+            readonly property string a: (chip.p?.trackArtist ?? "").trim()
+            width: Math.min(implicitWidth, 220)
             elide: Text.ElideRight
             textFormat: Text.StyledText
-            text: (chip.p?.trackTitle ?? "").replace(/</g, "&lt;") + (chip.p?.trackArtist ? ` <font color="${Theme.textDim}">— ${chip.p.trackArtist.replace(/</g, "&lt;")}</font>` : "")
+            text: (t || "SIN SEÑAL").replace(/</g, "&lt;") + (t && a && !chip.compact ? ` <font color="${Theme.textDim}">— ${a.replace(/</g, "&lt;")}</font>` : "")
             color: Theme.text
             font.family: Theme.fontMono
-            font.pixelSize: 13
+            font.pixelSize: Theme.fsBase
         }
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: chip.playing ? "▶" : "❚❚"
             color: Theme.accent
+            font.family: Theme.fontMono
             font.pixelSize: 11
         }
     }

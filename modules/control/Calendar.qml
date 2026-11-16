@@ -72,7 +72,7 @@ CutPanel {
                 text: cal.shown.toLocaleString(cal.es, "MMMM yyyy").toUpperCase()
                 color: Theme.accent
                 font.family: Theme.fontDisplay
-                font.pixelSize: 13
+                font.pixelSize: Theme.fsBase
                 font.letterSpacing: Theme.tracking
 
                 MouseArea {
@@ -116,7 +116,7 @@ CutPanel {
                         width: 32
                         height: 32
                         padding: 0
-                        cutTopRight: 8
+                        cutTopRight: Theme.cutSmall
                         scanlines: false
                         color: "transparent"
                         borderColor: Theme.accentDim

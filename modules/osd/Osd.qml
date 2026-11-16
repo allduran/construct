@@ -44,7 +44,7 @@ PanelWindow {
 
     readonly property bool isVol: kind === "volume"
     readonly property real value: isVol ? (Audio.muted ? 0 : Audio.volume) : Brightness.value
-    readonly property color tone: isVol ? (Audio.muted ? Theme.magenta : Theme.accent) : Theme.cyan
+    readonly property color tone: isVol ? (Audio.muted ? Theme.yellow : Theme.accent) : Theme.cyan
     readonly property string label: isVol ? (Audio.muted ? "VOLUMEN · SILENCIO" : "VOLUMEN") : "BRILLO"
 
     Timer {
@@ -82,7 +82,7 @@ PanelWindow {
                     text: osd.label
                     color: osd.tone
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fsBase
                     font.letterSpacing: Theme.tracking
                 }
                 Text {
@@ -95,23 +95,13 @@ PanelWindow {
                 }
             }
 
-            Row {
+            BlockSlider {
                 width: parent.width
-                spacing: 3
-                Repeater {
-                    model: 20
-                    Rectangle {
-                        required property int index
-                        width: (parent.width - 19 * 3) / 20
-                        height: 14
-                        color: index < Math.round(osd.value * 20) ? osd.tone : Theme.track
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 80
-                            }
-                        }
-                    }
-                }
+                showHeader: false
+                interactive: false
+                blockHeight: 14
+                value: osd.value
+                barColor: osd.tone
             }
         }
     }

@@ -111,7 +111,7 @@ PanelWindow {
         y: Theme.barHeight + 24
         padding: 20
         cutTopRight: 0
-        cutBottomRight: 22
+        cutBottomLeft: Theme.cutLg
         color: Qt.alpha(Theme.bg, 0.95)
         borderColor: Theme.accentDim
         transform: Translate {
@@ -138,7 +138,7 @@ PanelWindow {
                     text: "ENLACE NEURAL // AUDIO"
                     color: Theme.accent
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fsBase
                     font.letterSpacing: Theme.tracking
                 }
 
@@ -186,7 +186,7 @@ PanelWindow {
                     width: 132
                     height: 132
                     padding: 0
-                    cutTopRight: 14
+                    cutTopRight: Theme.cut
                     scanlines: false
                     color: Qt.alpha(Theme.accent, 0.05)
                     borderColor: Theme.accentDim
@@ -201,6 +201,7 @@ PanelWindow {
                         asynchronous: true
                     }
                     Text {
+                        font.family: Theme.fontMono
                         visible: art.status !== Image.Ready
                         anchors.centerIn: parent
                         text: "♪"

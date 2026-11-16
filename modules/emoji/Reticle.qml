@@ -5,6 +5,7 @@ import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Shapes
 import qs.common
+import qs.components
 import qs.services
 
 // RETÍCULA //: los 8 emojis más usados alrededor del ratón.
@@ -313,7 +314,20 @@ PanelWindow {
     }
 
     // ── OBJETIVO FIJADO: a la derecha (o a la izquierda si no cabe) ──
+    CutPanel {
+        visible: info.visible
+        x: info.x - 14
+        y: info.y - 14
+        width: info.width + 28
+        height: info.implicitHeight + 28
+        padding: 0
+        scanlines: false
+        cutTopRight: Theme.cutTab
+        color: Qt.alpha(Theme.bg, 0.94)
+        borderColor: Theme.accentFaint
+    }
     Column {
+        id: info
         readonly property bool leftSide: ret.cx + disc.c + 330 > ret.width
         visible: ret.placed && ret.current !== null
         width: 300
@@ -328,7 +342,7 @@ PanelWindow {
             text: "OBJETIVO FIJADO"
             color: Theme.accent
             font.family: Theme.fontDisplay
-            font.pixelSize: 12
+            font.pixelSize: Theme.fsSm
             font.letterSpacing: Theme.tracking
         }
         Rectangle {
@@ -366,9 +380,11 @@ PanelWindow {
 
     // ── Ayuda ──
     Text {
+        id: help
+        // Debajo del disco si cabe; si no, encima
+        readonly property bool below: ret.cy + disc.c + 40 < ret.height
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 60
+        y: below ? ret.cy + disc.c + 12 : ret.cy - disc.c - height - 12
         visible: ret.placed
         textFormat: Text.StyledText
         text: [["MOVER", "apuntar"], ["CLIC", "escribir"], ["1–8", "directo"], ["CENTRO / TAB", "GLIFOS completo"], ["ESC", "cancelar"]].map(h => `<font color="${Theme.accent}">${h[0]}</font> ${h[1]}`).join("   ")

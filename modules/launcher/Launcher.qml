@@ -97,10 +97,10 @@ PanelWindow {
         return m < 1 ? "ahora" : m < 60 ? `${m} min` : m < 1440 ? `${Math.floor(m / 60)} h` : `${Math.floor(m / 1440)} d`;
     }
     function opened() {
-        input.text = "";
+        field.input.text = "";
         sel = 0;
         tab = 0;
-        input.forceActiveFocus();
+        field.input.forceActiveFocus();
         openAnim.restart();
         title.glitch();
     }
@@ -186,12 +186,12 @@ PanelWindow {
     MatrixRain {
         id: rain
         anchors.fill: parent
-        opacity: 0.6
+        opacity: Theme.rainOpacity
         running: Theme.rain && launcher.visible
     }
     Rectangle {
         anchors.fill: parent
-        color: Qt.alpha(Theme.bg, 0.55)
+        color: Qt.alpha(Theme.bg, Theme.veil)
     }
     MouseArea {
         anchors.fill: parent
@@ -228,8 +228,8 @@ PanelWindow {
                     text: "JACK IN //"
                     color: Theme.accent
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 44
-                    font.letterSpacing: 6
+                    font.pixelSize: Theme.fsHero
+                    font.letterSpacing: Theme.trackingWide
                 }
                 Text {
                     anchors.right: parent.right
@@ -244,92 +244,28 @@ PanelWindow {
             }
 
             // Campo de búsqueda
-            CutPanel {
+            PromptField {
+                id: field
                 width: parent.width
-                height: 72
-                padding: 22
-                cutTopRight: 20
-                cutBottomLeft: 20
-                color: Qt.alpha(Theme.bg, 0.94)
-                borderColor: Theme.accent
-
-                Row {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
-                    spacing: 14
-
-                    Text {
-                        id: prompt
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: ">"
-                        color: Theme.accent
-                        font.family: Theme.fontMono
-                        font.pixelSize: 26
-                    }
-
-                    TextInput {
-                        id: input
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width - prompt.width - escHint.width - parent.spacing * 2
-                        color: Theme.textBright
-                        selectionColor: Theme.accentDim
-                        font.family: Theme.fontMono
-                        font.pixelSize: 26
-                        clip: true
-
-                        onTextChanged: launcher.query = text
-
-                        // Cursor de bloque parpadeante
-                        cursorDelegate: Rectangle {
-                            id: caret
-                            width: 13
-                            color: Theme.accent
-                            Timer {
-                                interval: 530
-                                running: input.activeFocus
-                                repeat: true
-                                onTriggered: caret.opacity = caret.opacity > 0 ? 0 : 1
-                            }
-                        }
-
-                        // Texto de ayuda cuando está vacío
-                        Text {
-                            visible: !input.text
-                            anchors.verticalCenter: parent.verticalCenter
-                            x: 20
-                            text: ["buscar programa…", "buscar comando…", "2^10, sqrt(2)*pi…", "!yt lofi, archlinux.org…", "nombre de archivo o carpeta…"][launcher.tab]
-                            color: Theme.textDim
-                            font: input.font
-                        }
-
-                        Keys.onPressed: e => {
-                            if (e.key === Qt.Key_Escape)
-                                launcher.close();
-                            else if (e.key === Qt.Key_Down)
-                                launcher.move(1);
-                            else if (e.key === Qt.Key_Up)
-                                launcher.move(-1);
-                            else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter)
-                                launcher.activate(launcher.current);
-                            else if (e.key === Qt.Key_Tab)
-                                launcher.tab = (launcher.tab + 1) % launcher.tabs.length;
-                            else if (e.key === Qt.Key_Backtab)
-                                launcher.tab = (launcher.tab + launcher.tabs.length - 1) % launcher.tabs.length;
-                            else
-                                return;
-                            e.accepted = true;
-                        }
-                    }
-
-                    Text {
-                        id: escHint
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "ESC"
-                        color: Theme.textDim
-                        font.family: Theme.fontMono
-                        font.pixelSize: Theme.fsSm
-                        font.letterSpacing: 2
-                    }
+                placeholder: ["buscar programa…", "buscar comando…", "2^10, sqrt(2)*pi…", "!yt lofi, archlinux.org…", "nombre de archivo o carpeta…"][launcher.tab]
+                hint: "ESC"
+                onTextChanged: launcher.query = text
+                onKeyPressed: e => {
+                    if (e.key === Qt.Key_Escape)
+                        launcher.close();
+                    else if (e.key === Qt.Key_Down)
+                        launcher.move(1);
+                    else if (e.key === Qt.Key_Up)
+                        launcher.move(-1);
+                    else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter)
+                        launcher.activate(launcher.current);
+                    else if (e.key === Qt.Key_Tab)
+                        launcher.tab = (launcher.tab + 1) % launcher.tabs.length;
+                    else if (e.key === Qt.Key_Backtab)
+                        launcher.tab = (launcher.tab + launcher.tabs.length - 1) % launcher.tabs.length;
+                    else
+                        return;
+                    e.accepted = true;
                 }
             }
 
@@ -340,38 +276,17 @@ PanelWindow {
                 Repeater {
                     model: launcher.tabs
 
-                    delegate: CutPanel {
+                    delegate: TabChip {
                         id: tabChip
                         required property string modelData
                         required property int index
                         // Con "=" se marca CALC aunque la pestaña sea otra
-                        readonly property bool on: index === (launcher.calcMode ? 2 : launcher.webMode ? 3 : launcher.filesMode ? 4 : launcher.tab)
-
-                        width: tabLabel.implicitWidth + 36
+                        on: index === (launcher.calcMode ? 2 : launcher.webMode ? 3 : launcher.filesMode ? 4 : launcher.tab)
+                        label: modelData
                         height: 44
-                        padding: 0
-                        cutTopRight: 10
-                        scanlines: false
-                        color: on ? Theme.accent : Theme.surface
-                        borderColor: on ? Theme.accent : Theme.accentDim
-
-                        Text {
-                            id: tabLabel
-                            anchors.centerIn: parent
-                            text: tabChip.modelData
-                            color: tabChip.on ? Theme.accentFg : Theme.textDim
-                            font.family: Theme.fontDisplay
-                            font.pixelSize: 13
-                            font.letterSpacing: Theme.tracking
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                launcher.tab = tabChip.index;
-                                input.forceActiveFocus();   // seguir escribiendo tras el clic
-                            }
+                        onClicked: {
+                            launcher.tab = index;
+                            field.input.forceActiveFocus();   // seguir escribiendo tras el clic
                         }
                     }
                 }
@@ -400,7 +315,7 @@ PanelWindow {
                     padding: 12
                     cutTopRight: 0
                     scanlines: false
-                    color: selected ? Qt.alpha(Theme.accent, 0.12) : Theme.surface
+                    color: selected ? Qt.tint(Qt.alpha(Theme.bg, 0.94), Qt.alpha(Theme.accent, 0.12)) : Qt.alpha(Theme.bg, 0.94)
                     borderColor: selected ? Theme.accent : Qt.alpha(Theme.textDim, 0.25)
 
                     MouseArea {

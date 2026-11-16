@@ -33,7 +33,7 @@ PanelWindow {
     readonly property var kinds: ["TODO", "TEXTO", "CÓDIGO", "ENLACE", "COLOR", "IMAGEN"]
 
     function kindColor(k: string): color {
-        return k === "CÓDIGO" ? Theme.cyan : k === "ENLACE" ? Theme.yellow : k === "COLOR" ? "#ff7ab0" : k === "IMAGEN" ? Theme.accent : Theme.text;
+        return k === "CÓDIGO" || k === "ENLACE" ? Theme.cyan : k === "COLOR" || k === "IMAGEN" ? Theme.accent : Theme.textDim;
     }
 
     // Entradas filtradas por pestaña y texto (las fijadas ya vienen primero)
@@ -57,10 +57,10 @@ PanelWindow {
 
     function opened() {
         Clipboard.refresh();
-        input.text = "";
+        field.input.text = "";
         sel = 0;
         kindTab = 0;
-        input.forceActiveFocus();
+        field.input.forceActiveFocus();
         openAnim.restart();
         title.glitch();
     }
@@ -113,9 +113,9 @@ PanelWindow {
             id: abText
             anchors.centerIn: parent
             text: ab.label
-            color: ab.primary ? Theme.accentFg : ab.danger ? "#ff5c9d" : Theme.text
+            color: ab.primary ? Theme.accentFg : ab.danger ? Theme.magentaText : Theme.text
             font.family: Theme.fontDisplay
-            font.pixelSize: 12
+            font.pixelSize: Theme.fsSm
             font.letterSpacing: 2
         }
         MouseArea {
@@ -131,12 +131,12 @@ PanelWindow {
     MatrixRain {
         id: rain
         anchors.fill: parent
-        opacity: 0.5
+        opacity: Theme.rainOpacity
         running: Theme.rain && buf.visible
     }
     Rectangle {
         anchors.fill: parent
-        color: Qt.alpha(Theme.bg, 0.66)
+        color: Qt.alpha(Theme.bg, Theme.veil)
     }
     MouseArea {
         anchors.fill: parent
@@ -172,8 +172,8 @@ PanelWindow {
                     text: "BUFFER //"
                     color: Theme.accent
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 44
-                    font.letterSpacing: 6
+                    font.pixelSize: Theme.fsHero
+                    font.letterSpacing: Theme.trackingWide
                 }
                 Text {
                     anchors.right: parent.right
@@ -188,88 +188,37 @@ PanelWindow {
             }
 
             // Buscador
-            CutPanel {
+            PromptField {
+                id: field
                 width: parent.width
-                height: 64
-                padding: 22
-                cutTopRight: 20
-                cutBottomLeft: 20
-                color: Qt.alpha(Theme.bg, 0.94)
-                borderColor: Theme.accent
-
-                Row {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width
-                    spacing: 14
-
-                    Text {
-                        id: gt
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: ">"
-                        color: Theme.accent
-                        font.family: Theme.fontMono
-                        font.pixelSize: 24
-                    }
-
-                    TextInput {
-                        id: input
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width - gt.width - parent.spacing
-                        color: Theme.textBright
-                        selectionColor: Theme.accentDim
-                        font.family: Theme.fontMono
-                        font.pixelSize: 22
-                        clip: true
-                        onTextChanged: buf.query = text
-
-                        cursorDelegate: Rectangle {
-                            id: caret
-                            width: 12
-                            color: Theme.accent
-                            Timer {
-                                interval: 530
-                                running: input.activeFocus
-                                repeat: true
-                                onTriggered: caret.opacity = caret.opacity > 0 ? 0 : 1
-                            }
-                        }
-
-                        Text {
-                            visible: !input.text
-                            anchors.verticalCenter: parent.verticalCenter
-                            x: 20
-                            text: "filtrar historial…"
-                            color: Theme.textDim
-                            font: input.font
-                        }
-
-                        Keys.onPressed: e => {
-                            const ctrl = e.modifiers & Qt.ControlModifier;
-                            const shift = e.modifiers & Qt.ShiftModifier;
-                            if (e.key === Qt.Key_Escape)
-                                buf.close();
-                            else if (e.key === Qt.Key_Down)
-                                buf.move(1);
-                            else if (e.key === Qt.Key_Up)
-                                buf.move(-1);
-                            else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
-                                if (ctrl && buf.current?.kind === "ENLACE")
-                                    buf.openLink();
-                                else
-                                    buf.use(!shift);
-                            } else if (e.key === Qt.Key_Tab)
-                                buf.kindTab = (buf.kindTab + 1) % buf.kinds.length;
-                            else if (e.key === Qt.Key_Backtab)
-                                buf.kindTab = (buf.kindTab + buf.kinds.length - 1) % buf.kinds.length;
-                            else if (ctrl && e.key === Qt.Key_P)
-                                Clipboard.togglePin(buf.current);
-                            else if (e.key === Qt.Key_Delete)
-                                Clipboard.remove(buf.current);
-                            else
-                                return;
-                            e.accepted = true;
-                        }
-                    }
+                placeholder: "filtrar historial…"
+                hint: "ESC"
+                onTextChanged: buf.query = text
+                onKeyPressed: e => {
+                    const ctrl = e.modifiers & Qt.ControlModifier;
+                    const shift = e.modifiers & Qt.ShiftModifier;
+                    if (e.key === Qt.Key_Escape)
+                        buf.close();
+                    else if (e.key === Qt.Key_Down)
+                        buf.move(1);
+                    else if (e.key === Qt.Key_Up)
+                        buf.move(-1);
+                    else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) {
+                        if (ctrl && buf.current?.kind === "ENLACE")
+                            buf.openLink();
+                        else
+                            buf.use(!shift);
+                    } else if (e.key === Qt.Key_Tab)
+                        buf.kindTab = (buf.kindTab + 1) % buf.kinds.length;
+                    else if (e.key === Qt.Key_Backtab)
+                        buf.kindTab = (buf.kindTab + buf.kinds.length - 1) % buf.kinds.length;
+                    else if (ctrl && e.key === Qt.Key_P)
+                        Clipboard.togglePin(buf.current);
+                    else if (e.key === Qt.Key_Delete)
+                        Clipboard.remove(buf.current);
+                    else
+                        return;
+                    e.accepted = true;
                 }
             }
 
@@ -278,46 +227,16 @@ PanelWindow {
                 spacing: 8
                 Repeater {
                     model: buf.kinds
-                    delegate: CutPanel {
+                    delegate: TabChip {
                         id: kt
                         required property string modelData
                         required property int index
-                        readonly property bool on: index === buf.kindTab
-
-                        width: ktRow.implicitWidth + 32
-                        height: 40
-                        padding: 0
-                        cutTopRight: 10
-                        scanlines: false
-                        color: on ? Theme.accent : Theme.surface
-                        borderColor: on ? Theme.accent : Theme.accentDim
-
-                        Row {
-                            id: ktRow
-                            anchors.centerIn: parent
-                            spacing: 8
-                            Text {
-                                text: kt.modelData
-                                color: kt.on ? Theme.accentFg : Theme.textDim
-                                font.family: Theme.fontDisplay
-                                font.pixelSize: 12
-                                font.letterSpacing: Theme.tracking
-                            }
-                            Text {
-                                text: buf.count(kt.modelData)
-                                color: kt.on ? Theme.accentFg : Theme.textDim
-                                opacity: 0.7
-                                font.family: Theme.fontDisplay
-                                font.pixelSize: 12
-                            }
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                buf.kindTab = kt.index;
-                                input.forceActiveFocus();
-                            }
+                        on: index === buf.kindTab
+                        label: modelData
+                        count: String(buf.count(modelData))
+                        onClicked: {
+                            buf.kindTab = index;
+                            field.input.forceActiveFocus();
                         }
                     }
                 }
@@ -434,8 +353,8 @@ PanelWindow {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     padding: 0
-                    cutTopRight: 22
-                    cutBottomLeft: 22
+                    cutTopRight: Theme.cutLg
+                    cutBottomLeft: Theme.cutLg
                     color: Qt.alpha(Theme.bg, 0.94)
                     borderColor: Theme.accentDim
 
@@ -456,14 +375,14 @@ PanelWindow {
                                 text: buf.current?.kind ?? ""
                                 color: buf.kindColor(buf.current?.kind ?? "")
                                 font.family: Theme.fontDisplay
-                                font.pixelSize: 12
+                                font.pixelSize: Theme.fsSm
                                 font.letterSpacing: Theme.tracking
                             }
                             Text {
                                 text: buf.current?.pinned ? "◆ FIJADA" : "ENTRADA #" + (buf.current?.id ?? "")
                                 color: Theme.textDim
                                 font.family: Theme.fontDisplay
-                                font.pixelSize: 12
+                                font.pixelSize: Theme.fsSm
                                 font.letterSpacing: Theme.tracking
                             }
                             Item {
@@ -598,7 +517,7 @@ PanelWindow {
                                     width: parent.width
                                     text: buf.current?.text ?? ""
                                     wrapMode: Text.WrapAnywhere
-                                    color: Theme.yellow
+                                    color: Theme.cyan
                                     font.family: Theme.fontMono
                                     font.pixelSize: 26
                                 }
@@ -612,12 +531,12 @@ PanelWindow {
                                             width: partText.implicitWidth + 20
                                             height: 30
                                             color: "transparent"
-                                            border.color: Qt.alpha(Theme.yellow, 0.4)
+                                            border.color: Qt.alpha(Theme.cyan, 0.4)
                                             Text {
                                                 id: partText
                                                 anchors.centerIn: parent
                                                 text: modelData
-                                                color: Theme.yellow
+                                                color: Theme.cyan
                                                 font.family: Theme.fontMono
                                                 font.pixelSize: Theme.fsSm
                                             }
@@ -628,7 +547,7 @@ PanelWindow {
                                     text: "ctrl + ↵ abre el enlace en el navegador"
                                     color: Theme.textDim
                                     font.family: Theme.fontMono
-                                    font.pixelSize: 13
+                                    font.pixelSize: Theme.fsBase
                                 }
                             }
 

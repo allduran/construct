@@ -99,7 +99,7 @@ PanelWindow {
         property int filter: 0
         property real intensity: 0
         property bool big: false
-        readonly property int cut: 22
+        readonly property int cut: Theme.cutLg
         readonly property alias img: wi
 
         // Recorte de la imagen a la forma del chaflán
@@ -175,8 +175,8 @@ PanelWindow {
                 text: "SEÑAL //"
                 color: Theme.accent
                 font.family: Theme.fontDisplay
-                font.pixelSize: 40
-                font.letterSpacing: 6
+                font.pixelSize: Theme.fsHero
+                font.letterSpacing: Theme.trackingWide
             }
             Text {
                 anchors.right: parent.right
@@ -210,7 +210,6 @@ PanelWindow {
                 height: 202
                 x: modelData < 0 ? content.cx - content.bigW / 2 - width - 40 : content.cx + content.bigW / 2 + 40
                 y: content.topY + (content.bigH - height) / 2
-                opacity: hov.hovered ? 0.75 : 0.45
 
                 Card {
                     anchors.fill: parent
@@ -219,10 +218,11 @@ PanelWindow {
                 CutPanel {
                     anchors.fill: parent
                     padding: 0
-                    cutTopRight: 22
-                    cutBottomLeft: 22
+                    cutTopRight: Theme.cutLg
+                    cutBottomLeft: Theme.cutLg
                     scanlines: false
-                    color: "transparent"
+                    // Velo en vez de transparencia: no deja ver el escritorio; se retira al pasar el ratón
+                    color: hov.hovered ? "transparent" : Qt.alpha(Theme.bg, 0.55)
                     borderColor: Theme.accentDim
                 }
                 HoverHandler {
@@ -255,8 +255,8 @@ PanelWindow {
             CutPanel {
                 anchors.fill: parent
                 padding: 0
-                cutTopRight: 22
-                cutBottomLeft: 22
+                cutTopRight: Theme.cutLg
+                cutBottomLeft: Theme.cutLg
                 scanlines: false
                 color: "transparent"
                 borderColor: Theme.accent
@@ -318,7 +318,7 @@ PanelWindow {
                             width: fcRow.implicitWidth + 28
                             height: 44
                             padding: 0
-                            cutTopRight: 10
+                            cutTopRight: Theme.cutTab
                             scanlines: false
                             color: on ? Theme.accent : "transparent"
                             borderColor: on ? Theme.accent : Theme.accentDim
@@ -331,13 +331,13 @@ PanelWindow {
                                     opacity: 0.6
                                     color: fc.on ? Theme.accentFg : Theme.accent
                                     font.family: Theme.fontDisplay
-                                    font.pixelSize: 12
+                                    font.pixelSize: Theme.fsSm
                                 }
                                 Text {
                                     text: fc.modelData
                                     color: fc.on ? Theme.accentFg : Theme.textDim
                                     font.family: Theme.fontDisplay
-                                    font.pixelSize: 12
+                                    font.pixelSize: Theme.fsSm
                                     font.letterSpacing: 2
                                 }
                             }
@@ -365,7 +365,7 @@ PanelWindow {
                         text: "↵ APLICAR"
                         color: Theme.accentFg
                         font.family: Theme.fontDisplay
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.fsBase
                         font.letterSpacing: 2
                     }
                     MouseArea {
@@ -391,35 +391,14 @@ PanelWindow {
                     font.pixelSize: Theme.fsSm
                     font.letterSpacing: 1.6
                 }
-                Item {
+                BlockSlider {
                     width: parent.width - 110 - 48 - parent.spacing * 2
-                    height: 18
-                    Row {
-                        anchors.fill: parent
-                        spacing: 3
-                        Repeater {
-                            model: 20
-                            Rectangle {
-                                required property int index
-                                width: (parent.width - 19 * 3) / 20
-                                height: 18
-                                color: index < Math.round(sg.intensity * 20) ? Theme.accent : Theme.track
-                            }
-                        }
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: sg.filter !== 0
-                        cursorShape: Qt.PointingHandCursor
-                        function pick(x: real) {
-                            sg.intensity = Math.max(0.05, Math.min(1, Math.ceil(x / width * 20) / 20));
-                        }
-                        onPressed: e => pick(e.x)
-                        onPositionChanged: e => {
-                            if (pressed)
-                                pick(e.x);
-                        }
-                    }
+                    showHeader: false
+                    wheelable: false
+                    interactive: sg.filter !== 0
+                    value: sg.intensity
+                    // Pasos de 1/20, mínimo 0.05
+                    onMoved: v => sg.intensity = Math.max(0.05, Math.min(1, Math.ceil(v * 20) / 20))
                 }
                 Text {
                     width: 48
@@ -449,7 +428,14 @@ PanelWindow {
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fsSm
                 }
+                Rectangle {
+                    // Banda tras los atajos: legibles sobre cualquier fondo
+                    anchors.fill: keyHint
+                    anchors.margins: -6
+                    color: Qt.alpha(Theme.bg, 0.85)
+                }
                 Text {
+                    id: keyHint
                     anchors.right: parent.right
                     text: "←→ fondo · 1–4 filtro · ↑↓ intensidad · ESC cerrar"
                     color: Theme.textDim

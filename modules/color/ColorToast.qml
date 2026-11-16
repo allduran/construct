@@ -74,7 +74,7 @@ PanelWindow {
         width: parent.width
         padding: 16
         cutTopRight: 0
-        cutTopLeft: 18
+        cutTopLeft: Theme.cutLg
         color: Qt.alpha(Theme.bg, 0.95)
         borderColor: Theme.accentDim
         transform: Translate {
@@ -93,14 +93,15 @@ PanelWindow {
                     text: "MUESTRA //"
                     color: Theme.accent
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fsBase
                     font.letterSpacing: Theme.tracking
                 }
                 Text {
+                    font.family: Theme.fontMono
                     anchors.right: parent.right
                     text: "✕"
                     color: closeArea.containsMouse ? Theme.textBright : Theme.textDim
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fsBase
                     MouseArea {
                         id: closeArea
                         anchors.fill: parent
@@ -122,7 +123,7 @@ PanelWindow {
                     anchors.bottom: parent.bottom
                     anchors.margins: 12
                     text: toast.hex.toUpperCase()
-                    color: Colors.isLight(toast.hex || "#000000") ? "#020403" : "#eafff2"
+                    color: Colors.isLight(toast.hex || "#000000") ? Theme.accentFg : Theme.textBright
                     font.family: Theme.fontDisplay
                     font.pixelSize: 26
                     font.letterSpacing: 2
@@ -164,7 +165,7 @@ PanelWindow {
                                 text: fmt.modelData.v
                                 color: Theme.textBright
                                 font.family: Theme.fontMono
-                                font.pixelSize: 13
+                                font.pixelSize: Theme.fsBase
                             }
                         }
                         MouseArea {

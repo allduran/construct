@@ -50,37 +50,13 @@ CutPanel {
                 }
             }
         }
-        // Ancho fijo con el dígito más ancho (fuente proporcional); si pasa de 99 min crece solo
-        Instantiator {
-            id: recDigits
-            model: 10
-            delegate: TextMetrics {
-                required property int index
-                font.family: Theme.fontDisplay
-                font.pixelSize: 13
-                font.letterSpacing: 2
-                text: String(index)
-            }
-        }
-        TextMetrics {
-            id: recBase
-            font.family: Theme.fontDisplay
-            font.pixelSize: 13
-            font.letterSpacing: 2
-            text: "REC :"
-        }
-        Text {
+        // Cifras tabulares; si pasa de 99 min crece solo
+        TabularText {
             anchors.verticalCenter: parent.verticalCenter
-            width: {
-                let m = 0;
-                for (let i = 0; i < recDigits.count; i++)
-                    m = Math.max(m, recDigits.objectAt(i).advanceWidth);
-                return Math.max(Math.ceil(4 * m + recBase.advanceWidth) + 1, Math.ceil(implicitWidth));
-            }
             text: "REC " + String(Math.floor(chip.elapsed / 60)).padStart(2, "0") + ":" + String(chip.elapsed % 60).padStart(2, "0")
-            color: "#ff7ab0"
+            color: Theme.magentaText
             font.family: Theme.fontDisplay
-            font.pixelSize: 13
+            font.pixelSize: Theme.fsBase
             font.letterSpacing: 2
         }
     }

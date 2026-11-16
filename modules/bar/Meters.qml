@@ -86,21 +86,38 @@ Row {
     }
 
     // ── Red ──
-    // Ancho fijo (peor caso, fuente mono) para no relayoutar la barra en cada muestra
+    // Dos campos de ancho fijo (peor caso real, alineados a la derecha): estable sin hueco al final
     TextMetrics {
-        id: netMetrics
+        id: rateMetrics
         font.family: Theme.fontMono
         font.pixelSize: Theme.fsSm
-        text: "NET ↓0000.0M ↑0000.0M"
+        text: "↓000.0M"
     }
-    Text {
+    Row {
         anchors.verticalCenter: parent.verticalCenter
-        width: Math.ceil(netMetrics.advanceWidth)
-        textFormat: Text.StyledText
-        text: `NET <font color="${Theme.text}">↓${SysStats.rate(SysStats.netDown)} ↑${SysStats.rate(SysStats.netUp)}</font>`
-        color: Theme.textDim
-        font.family: Theme.fontMono
-        font.pixelSize: Theme.fsSm
+        spacing: 6
+        Text {
+            text: "NET"
+            color: Theme.textDim
+            font.family: Theme.fontMono
+            font.pixelSize: Theme.fsSm
+        }
+        Text {
+            width: Math.ceil(rateMetrics.advanceWidth)
+            horizontalAlignment: Text.AlignRight
+            text: "↓" + SysStats.rate(SysStats.netDown)
+            color: Theme.text
+            font.family: Theme.fontMono
+            font.pixelSize: Theme.fsSm
+        }
+        Text {
+            width: Math.ceil(rateMetrics.advanceWidth)
+            horizontalAlignment: Text.AlignRight
+            text: "↑" + SysStats.rate(SysStats.netUp)
+            color: Theme.text
+            font.family: Theme.fontMono
+            font.pixelSize: Theme.fsSm
+        }
     }
 
     // ── WiFi ──

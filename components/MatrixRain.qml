@@ -9,7 +9,7 @@ Item {
     id: root
 
     property bool running: Theme.rain
-    property int fontSize: 18                   // tamaño en pantalla
+    property int fontSize: 20                   // tamaño en pantalla
     property int fps: 15
     property int downscale: 2
     property color color: Theme.accent          // estela

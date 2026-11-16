@@ -27,7 +27,7 @@ CutPanel {
     padding: 14
     cutTopRight: 0
     cutBottomLeft: 14
-    color: critical ? "#0a0206" : Qt.alpha(Theme.bg, 0.94)
+    color: critical ? Theme.surfaceCritical : Qt.alpha(Theme.bg, 0.94)
     borderColor: tone
 
     function close(): void {
@@ -95,7 +95,7 @@ CutPanel {
                 text: (card.notif.appName || "SISTEMA").toUpperCase()
                 color: card.tone
                 font.family: Theme.fontDisplay
-                font.pixelSize: 12
+                font.pixelSize: Theme.fsSm
                 font.letterSpacing: Theme.tracking
             }
             Text {
@@ -105,9 +105,10 @@ CutPanel {
                 font.pixelSize: Theme.fsXs
             }
             Text {
+                font.family: Theme.fontMono
                 text: "✕"
                 color: closeArea.containsMouse ? Theme.textBright : Theme.textDim
-                font.pixelSize: 13
+                font.pixelSize: Theme.fsBase
                 MouseArea {
                     id: closeArea
                     anchors.fill: parent
@@ -177,7 +178,7 @@ CutPanel {
                     id: btn
                     required property var modelData
                     padding: 8
-                    cutTopRight: 8
+                    cutTopRight: Theme.cutSmall
                     scanlines: false
                     color: btnArea.containsMouse ? Qt.alpha(card.tone, 0.15) : "transparent"
                     borderColor: Qt.alpha(card.tone, 0.6)

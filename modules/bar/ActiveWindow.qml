@@ -45,7 +45,7 @@ Item {
             id: titleText
             anchors.verticalCenter: parent.verticalCenter
             // Su ancho natural, pero nunca más que el hueco disponible
-            width: Math.min(implicitWidth, root.width - label.width - sep.width - cursor.width - parent.spacing * 3)
+            width: Math.max(0, Math.min(implicitWidth, root.width - label.width - sep.width - cursor.width - parent.spacing * 3))
             elide: Text.ElideRight
             text: root.title
             color: Theme.text

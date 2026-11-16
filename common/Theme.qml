@@ -15,6 +15,10 @@ Singleton {
     readonly property color magenta: "#ff2e88"   // urgente / alertas
     readonly property color yellow: "#f5e50a"   // avisos
     readonly property color accentFg: "#020403"   // texto sobre acento
+    readonly property color magentaText: "#ff7ab0"   // texto sobre fondo magenta / urgente
+    readonly property color surfaceCritical: "#0a0206"   // fondo de paneles críticos
+    readonly property color pillBlue: "#3d7bff"
+    readonly property color pillRed: "#ff3b3b"
 
     readonly property color text: "#d8ffe8"   // texto principal
     readonly property color textBright: "#eafff2"   // títulos, valores
@@ -50,20 +54,29 @@ Singleton {
     // Tamaños (px)
     readonly property int fsXs: 11
     readonly property int fsSm: 12
+    readonly property int fsBase: 13
     readonly property int fsMd: 14
     readonly property int fsLg: 18
     readonly property int fsXl: 24
+    readonly property int fsHero: 44   // títulos de overlays
 
     // Espaciado de etiquetas tipo HUD
     readonly property real tracking: 2.4   // font.letterSpacing en títulos
+    readonly property real trackingWide: 6   // tracking de títulos de overlays
 
     // ── Geometría ──────────────────────────────────────
     readonly property int cut: 14   // tamaño del recorte de esquina en paneles
     readonly property int cutSmall: 8    // botones, chips
+    readonly property int cutTab: 10    // pestañas y botones secundarios
+    readonly property int cutLg: 22    // paneles grandes, buscadores y paneles de la barra
     readonly property int gap: 10   // separación entre módulos
     readonly property int pad: 14   // padding interior de paneles
     readonly property int barHeight: 46
     readonly property int border: 1
+
+    // Overlays: velo y lluvia comunes
+    readonly property real veil: 0.7
+    readonly property real rainOpacity: 0.5
 
     // ── Efectos (se podrán cambiar desde el panel de control) ──
     property bool rain: true    // lluvia de katakana de fondo

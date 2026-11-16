@@ -31,7 +31,7 @@ CutPanel {
             text: t.label
             color: t.on ? Theme.accentFg : Theme.text
             font.family: Theme.fontDisplay
-            font.pixelSize: 13
+            font.pixelSize: Theme.fsBase
             font.letterSpacing: Theme.tracking
         }
         Text {

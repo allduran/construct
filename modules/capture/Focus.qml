@@ -341,7 +341,7 @@ PanelWindow {
                     text: sel.isRec ? "GRABACIÓN" : "CAPTURA"
                     color: Theme.accentFg
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.fsSm
                     font.letterSpacing: 2
                 }
             }
@@ -357,7 +357,7 @@ PanelWindow {
                     text: sel.audio ? "● REC + AUDIO" : "● REC"
                     color: sel.tone
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.fsSm
                     font.letterSpacing: 2
                     SequentialAnimation on opacity {
                         running: sel.isRec && sel.visible
@@ -469,8 +469,8 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         y: 96
         padding: 12
-        cutTopRight: 16
-        cutBottomLeft: 16
+        cutTopRight: Theme.cutLg
+        cutBottomLeft: Theme.cutLg
         color: Qt.alpha(Theme.bg, 0.95)
         borderColor: Qt.alpha(sel.tone, 0.5)
 
@@ -499,7 +499,7 @@ PanelWindow {
                     width: chipRow.implicitWidth + 28
                     height: 44
                     padding: 0
-                    cutTopRight: 10
+                    cutTopRight: Theme.cutTab
                     scanlines: false
                     color: on ? t : "transparent"
                     borderColor: on ? t : Qt.alpha(t, 0.4)
@@ -513,13 +513,13 @@ PanelWindow {
                             opacity: 0.6
                             color: chip.on ? Theme.accentFg : chip.t
                             font.family: Theme.fontDisplay
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fsSm
                         }
                         Text {
                             text: chip.modelData.label
                             color: chip.on ? Theme.accentFg : Theme.textDim
                             font.family: Theme.fontDisplay
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fsSm
                             font.letterSpacing: 2
                         }
                     }
@@ -548,9 +548,9 @@ PanelWindow {
                     id: audioText
                     anchors.centerIn: parent
                     text: "A · AUDIO " + (sel.audio ? "ON" : "OFF")
-                    color: sel.audio ? "#ff7ab0" : Theme.textDim
+                    color: sel.audio ? Theme.magentaText : Theme.textDim
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.fsSm
                     font.letterSpacing: 2
                 }
                 MouseArea {

@@ -73,7 +73,7 @@ PanelWindow {
         width: 460
         padding: 20
         cutTopRight: 0
-        cutTopLeft: 24
+        cutTopLeft: Theme.cutLg
         color: Qt.alpha(Theme.bg, 0.94)
         borderColor: Theme.accentDim
         transform: Translate {
@@ -112,7 +112,7 @@ PanelWindow {
                     implicitWidth: setRow.implicitWidth + 24
                     implicitHeight: 44
                     padding: 0
-                    cutTopRight: 10
+                    cutTopRight: Theme.cutTab
                     scanlines: false
                     color: setArea.containsMouse ? Qt.alpha(Theme.accent, 0.12) : "transparent"
                     borderColor: Theme.accentDim
@@ -122,6 +122,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         spacing: 8
                         Text {
+                            font.family: Theme.fontMono
                             text: "⚙"
                             color: Theme.accent
                             font.pixelSize: 15
@@ -131,7 +132,7 @@ PanelWindow {
                             text: "AJUSTES"
                             color: Theme.text
                             font.family: Theme.fontDisplay
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fsSm
                             font.letterSpacing: 2
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -168,7 +169,7 @@ PanelWindow {
                         text: `VERSÍCULO // DÍA ${Verse.dayOfYear}`
                         color: Theme.accent
                         font.family: Theme.fontDisplay
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.fsSm
                         font.letterSpacing: Theme.tracking
                     }
                     Text {
@@ -215,7 +216,7 @@ PanelWindow {
                     text: `TRANSMISIONES <font color="${Theme.textDim}">· ${Notifs.count}</font>`
                     color: Theme.accent
                     font.family: Theme.fontDisplay
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fsBase
                     font.letterSpacing: Theme.tracking
                 }
 
@@ -225,7 +226,7 @@ PanelWindow {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 8
-                    cutTopRight: 8
+                    cutTopRight: Theme.cutSmall
                     scanlines: false
                     color: purgeArea.containsMouse ? Qt.alpha(Theme.magenta, 0.15) : "transparent"
                     borderColor: purgeArea.containsMouse ? Theme.magenta : Theme.accentDim

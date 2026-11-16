@@ -24,44 +24,13 @@ CutPanel {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 12
 
-        // Hora (sin segundos: un fotograma por minuto, no por segundo)
-        Item {
+        // Hora (sin segundos: un fotograma por minuto, no por segundo); cifras tabulares
+        TabularText {
             anchors.verticalCenter: parent.verticalCenter
-            width: time.width
-            height: time.implicitHeight
-
-            // Ancho fijo con el dígito más ancho de la fuente (proporcional)
-            // para que el layout no cambie cada minuto
-            Instantiator {
-                id: digitsXl
-                model: 10
-                delegate: TextMetrics {
-                    required property int index
-                    font.family: Theme.fontDisplay
-                    font.pixelSize: Theme.fsXl
-                    text: String(index)
-                }
-            }
-            TextMetrics {
-                id: colonXl
-                font.family: Theme.fontDisplay
-                font.pixelSize: Theme.fsXl
-                text: ":"
-            }
-
-            Text {
-                id: time
-                width: {
-                    let m = 0;
-                    for (let i = 0; i < digitsXl.count; i++)
-                        m = Math.max(m, digitsXl.objectAt(i).advanceWidth);
-                    return Math.ceil(4 * m + colonXl.advanceWidth) + 1;
-                }
-                text: Qt.formatTime(clock.date, "HH:mm")
-                color: Theme.accentFg
-                font.family: Theme.fontDisplay
-                font.pixelSize: Theme.fsXl
-            }
+            text: Qt.formatTime(clock.date, "HH:mm")
+            color: Theme.accentFg
+            font.family: Theme.fontDisplay
+            font.pixelSize: Theme.fsXl
         }
 
         // Día y fecha en dos líneas

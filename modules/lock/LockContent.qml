@@ -109,7 +109,7 @@ Item {
             text: "SESIÓN BLOQUEADA · NODO 0x1F"
             color: Theme.textDim
             font.family: Theme.fontMono
-            font.pixelSize: 13
+            font.pixelSize: Theme.fsBase
             font.letterSpacing: 5
         }
         GlitchText {
@@ -155,7 +155,7 @@ Item {
             text: Verse.reference.toUpperCase() + " · " + Verse.version
             color: Theme.accent
             font.family: Theme.fontDisplay
-            font.pixelSize: 12
+            font.pixelSize: Theme.fsSm
             font.letterSpacing: Theme.tracking
         }
     }
@@ -179,7 +179,7 @@ Item {
                 text: "IDENTIFICACIÓN DE OPERADOR"
                 color: Lock.failed ? Theme.magenta : Theme.accent
                 font.family: Theme.fontDisplay
-                font.pixelSize: 13
+                font.pixelSize: Theme.fsBase
                 font.letterSpacing: Theme.tracking
             }
             Text {
@@ -187,7 +187,7 @@ Item {
                 text: Quickshell.env("USER")
                 color: Theme.textDim
                 font.family: Theme.fontMono
-                font.pixelSize: 13
+                font.pixelSize: Theme.fsBase
             }
         }
 
@@ -195,8 +195,8 @@ Item {
             width: parent.width
             height: 64
             padding: 20
-            cutTopRight: 18
-            cutBottomLeft: 18
+            cutTopRight: Theme.cutLg
+            cutBottomLeft: Theme.cutLg
             color: Qt.alpha(Theme.bg, 0.94)
             borderColor: Lock.failed ? Theme.magenta : Theme.accent
 
@@ -262,7 +262,7 @@ Item {
             text: Lock.failed ? "ACCESO DENEGADO — inténtalo de nuevo" : "Despierta, operador. La matriz te espera."
             color: Lock.failed ? Theme.magenta : Theme.textDim
             font.family: Theme.fontMono
-            font.pixelSize: 13
+            font.pixelSize: Theme.fsBase
         }
     }
 
@@ -314,7 +314,7 @@ Item {
             text: "ELIGE"
             color: Theme.text
             font.family: Theme.fontDisplay
-            font.pixelSize: 13
+            font.pixelSize: Theme.fsBase
             font.letterSpacing: 8
         }
 

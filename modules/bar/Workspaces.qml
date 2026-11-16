@@ -72,7 +72,7 @@ Row {
             Text {
                 anchors.centerIn: parent
                 text: String(chip.wsId).padStart(2, "0")   // 1 → "01"
-                color: chip.active ? Theme.accentFg : chip.urgent ? "#ff7ab0" : chip.occupied ? Theme.text : Theme.textDim
+                color: chip.active ? Theme.accentFg : chip.urgent ? Theme.magentaText : chip.occupied ? Theme.text : Theme.textDim
                 font.family: Theme.fontMono
                 font.pixelSize: Theme.fsSm
                 font.weight: Font.DemiBold
