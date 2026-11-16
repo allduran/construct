@@ -9,6 +9,8 @@ Singleton {
 
     property alias palette: store.palette      // ["#39ff88", …], el más nuevo primero
     property string last: ""
+    property bool toastOpen: false             // tarjeta MUESTRA visible (la carga un LazyLoader)
+    property string toastHex: ""
     signal picked(string hex)
 
     readonly property string gplPath: Quickshell.env("HOME") + "/Pictures/Paletas/construct.gpl"
@@ -83,6 +85,8 @@ Singleton {
                 root.last = hex;
                 store.palette = [hex].concat(store.palette.filter(c => c !== hex)).slice(0, 24);
                 root.copy(hex);
+                root.toastHex = hex;
+                root.toastOpen = true;
                 root.picked(hex);
             }
         }

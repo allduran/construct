@@ -1,3 +1,4 @@
+import Quickshell
 import QtQuick
 import qs.common
 
@@ -98,7 +99,7 @@ Item {
     // Intervalo aleatorio para que no parezca un metrónomo
     Timer {
         interval: root.minInterval
-        running: Theme.glitch && root.visible && !Theme.gameMode
+        running: Theme.glitch && root.visible && !Theme.gameMode && (root.QsWindow.window?.visible ?? true)
         repeat: true
         onTriggered: {
             interval = root.minInterval + Math.random() * (root.maxInterval - root.minInterval);

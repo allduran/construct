@@ -45,6 +45,17 @@ Singleton {
         return out;
     }
 
+    // Apps en orden de aparición en 'arr' (la más nueva primero)
+    function appsOf(arr): var {
+        const out = [];
+        for (const n of arr) {
+            const k = appKey(n);
+            if (!out.includes(k))
+                out.push(k);
+        }
+        return out;
+    }
+
     function clearAll() {
         const all = server.trackedNotifications.values.slice();
         for (const n of all)
@@ -78,7 +89,10 @@ Singleton {
                     return true;
                 });
             }
-            n.closed.connect(() => root.hidePopup(n));           // si la cierra la app, quitar el popup
+            n.closed.connect(() => {                              // si la cierra la app, quitar el popup
+                root.hidePopup(n);
+                delete root.times[n.id];
+            });
         }
     }
 }

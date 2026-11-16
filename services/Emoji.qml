@@ -68,8 +68,24 @@ Singleton {
     // La lista completa se carga la primera vez que se abre GLIFOS o la retícula
     readonly property bool wantedNow: ShellState.emojiOpen || ShellState.emojiWheelOpen
     property bool wanted: false
-    onWantedNowChanged: if (wantedNow)
-        wanted = true
+    onWantedNowChanged: {
+        if (wantedNow) {
+            unload.stop();
+            wanted = true;
+        } else {
+            unload.restart();
+        }
+    }
+    // Al cerrar los dos paneles se suelta la lista (con margen: retícula → GLIFOS cambia las dos banderas seguidas)
+    Timer {
+        id: unload
+        interval: 1000
+        onTriggered: {
+            root.wanted = false;
+            root.all = [];
+            gc();
+        }
+    }
 
     FileView {
         path: root.wanted ? Quickshell.shellDir + "/assets/emoji.json" : ""

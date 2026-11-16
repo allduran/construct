@@ -95,7 +95,10 @@ ShellRoot {
         active: ShellState.wallpaperOpen
         Signal {}
     }
-    ColorToast {}
+    LazyLoader {
+        active: Colors.toastOpen
+        ColorToast {}
+    }
     LazyLoader {
         active: ShellState.settingsOpen
         SettingsWindow {}

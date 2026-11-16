@@ -1,3 +1,4 @@
+import Quickshell
 import QtQuick
 import qs.common
 import qs.components
@@ -44,7 +45,7 @@ CutPanel {
             Timer {
                 interval: 140
                 repeat: true
-                running: chip.playing && chip.visible && !Theme.gameMode
+                running: chip.playing && chip.visible && !Theme.gameMode && (chip.QsWindow.window?.visible ?? true)
                 onTriggered: {
                     for (let i = 0; i < eq.count; i++)
                         eq.itemAt(i).height = 5 + Math.round(Math.random() * 13);

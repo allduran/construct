@@ -30,7 +30,7 @@ Item {
     MultiEffect {
         anchors.fill: parent
         source: img
-        visible: root.filter !== 0
+        visible: root.filter !== 0 && img.status === Image.Ready
         // TINTE: algo de color original + velo · FÓSFORO/TERMINAL: gris → acento
         saturation: root.filter === 1 ? -0.5 * root.k : -root.k
         contrast: root.filter >= 2 ? 0.25 * root.k : 0
@@ -39,39 +39,40 @@ Item {
         colorizationColor: root.tint
     }
 
-    // TERMINAL: scanlines + viñeta CRT
-    Item {
+    // TERMINAL: scanlines + viñeta CRT, solo si esta capa tiene imagen
+    Loader {
         anchors.fill: parent
-        visible: root.filter === 3
+        active: root.filter === 3 && root.source != ""
         opacity: root.k
-
-        Scanlines {
-            anchors.fill: parent
-            lineOpacity: 0.35
-        }
-        Shape {
-            anchors.fill: parent
-            ShapePath {
-                strokeWidth: 0
-                strokeColor: "transparent"
-                fillGradient: RadialGradient {
-                    centerX: root.width / 2
-                    centerY: root.height / 2
-                    focalX: centerX
-                    focalY: centerY
-                    centerRadius: Math.max(root.width, root.height) * 0.7
-                    GradientStop {
-                        position: 0.55
-                        color: "transparent"
+        sourceComponent: Item {
+            Scanlines {
+                anchors.fill: parent
+                lineOpacity: 0.35
+            }
+            Shape {
+                anchors.fill: parent
+                ShapePath {
+                    strokeWidth: 0
+                    strokeColor: "transparent"
+                    fillGradient: RadialGradient {
+                        centerX: root.width / 2
+                        centerY: root.height / 2
+                        focalX: centerX
+                        focalY: centerY
+                        centerRadius: Math.max(root.width, root.height) * 0.7
+                        GradientStop {
+                            position: 0.55
+                            color: "transparent"
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: Qt.rgba(0, 0, 0, 0.75)
+                        }
                     }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(0, 0, 0, 0.75)
+                    PathRectangle {
+                        width: root.width
+                        height: root.height
                     }
-                }
-                PathRectangle {
-                    width: root.width
-                    height: root.height
                 }
             }
         }

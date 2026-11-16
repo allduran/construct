@@ -1,3 +1,4 @@
+import Quickshell
 import QtQuick
 import qs.common
 import qs.services
@@ -8,9 +9,13 @@ import qs.services
 Item {
     id: grp
     required property var items          // notificaciones de la app, la más nueva primero
+    // Al desaparecer la última, el delegado vive un instante con items vacío: se conserva la anterior
+    property var shown: items
+    onItemsChanged: if (items.length > 0)
+        shown = items
     property bool popup: true
 
-    readonly property bool stacked: items.length > 1
+    readonly property bool stacked: shown.length > 1
     readonly property bool expanded: stacked && hover.hovered
 
     implicitHeight: col.implicitHeight + (stacked && !expanded ? 8 : 0)
@@ -42,22 +47,24 @@ Item {
 
         NotifCard {
             id: first
-            notif: grp.items[0]
+            notif: grp.shown[0]
             popup: grp.popup
-            group: grp.items
+            group: grp.shown
             held: grp.expanded
             width: grp.width
         }
 
         // El resto solo existe mientras está desplegado
         Repeater {
-            model: grp.expanded ? grp.items.slice(1) : []
+            model: ScriptModel {
+                values: grp.expanded ? grp.shown.slice(1) : []
+            }
             delegate: NotifCard {
                 required property var modelData
                 notif: modelData
                 popup: grp.popup
                 animateIn: false
-                group: grp.items
+                group: grp.shown
                 held: true
                 width: grp.width
             }
@@ -78,7 +85,7 @@ Item {
         Text {
             id: badge
             anchors.centerIn: parent
-            text: `+${grp.items.length - 1}`
+            text: `+${grp.shown.length - 1}`
             color: Theme.accent
             font.family: Theme.fontMono
             font.pixelSize: Theme.fsXs

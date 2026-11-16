@@ -33,11 +33,13 @@ PanelWindow {
         interactive: false
         // popups ya va del más nuevo al más viejo: el más nuevo arriba, agrupadas por app
         verticalLayoutDirection: ListView.TopToBottom
-        model: Notifs.groupByApp(Notifs.popups)
+        model: ScriptModel {
+            values: Notifs.appsOf(Notifs.popups)
+        }
 
         delegate: Item {
             id: slot
-            required property var modelData
+            required property string modelData          // clave de la app
 
             width: list.width
             height: group.implicitHeight + 10
@@ -45,7 +47,7 @@ PanelWindow {
             NotifGroup {
                 id: group
                 width: slot.width
-                items: slot.modelData.items
+                items: Notifs.popups.filter(n => Notifs.appKey(n) === slot.modelData)
                 popup: true
             }
         }

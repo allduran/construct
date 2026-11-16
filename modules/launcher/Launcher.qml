@@ -74,10 +74,10 @@ PanelWindow {
         return Apps.search(query).map(a => ({
                     name: a.name,
                     sub: a.genericName || a.comment || "",
-                    icon: Apps.icon(a),
+                    app: a,                       // icono y acción se resuelven en el delegado
+                    icon: "",
                     abbr: "",
-                    hint: "APP",
-                    run: () => Apps.launch(a)
+                    hint: "APP"
                 }));
     }
     readonly property var current: items[sel] ?? null
@@ -124,7 +124,7 @@ PanelWindow {
     }
     function activate(item) {
         if (item)
-            runAfterClose(item.run);
+            runAfterClose(item.run ?? (() => Apps.launch(item.app)));
     }
 
     // Entrada: parpadeo de monitor + subida + lluvia que aparece
@@ -427,10 +427,12 @@ PanelWindow {
                             color: row.selected ? Theme.accent : Qt.alpha(Theme.textDim, 0.18)
 
                             IconImage {
-                                visible: row.modelData.icon !== ""
+                                id: rowIcon
+                                readonly property string src: row.modelData.app ? Apps.icon(row.modelData.app) : row.modelData.icon
+                                visible: src !== ""
                                 anchors.centerIn: parent
                                 implicitSize: 26
-                                source: row.modelData.icon
+                                source: src
                                 layer.enabled: true
                                 layer.effect: MultiEffect {
                                     colorization: 1.0
@@ -438,7 +440,7 @@ PanelWindow {
                                 }
                             }
                             Text {
-                                visible: row.modelData.icon === ""
+                                visible: rowIcon.src === ""
                                 anchors.centerIn: parent
                                 text: row.modelData.abbr
                                 color: row.selected ? Theme.accentFg : Theme.accent

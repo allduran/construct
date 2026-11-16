@@ -351,31 +351,31 @@ PanelWindow {
                     anchors.bottom: parent.bottom
                     spacing: 3
                     Repeater {
+                        id: viz
                         model: 48
                         Rectangle {
-                            id: vb
                             required property int index
-                            readonly property real seed: (Math.sin(index * 12.9898) * 43758.5453) % 1
                             anchors.bottom: parent.bottom
                             width: (500 - 40 - 47 * 3) / 48
                             height: 6
                             color: index < 14 ? Theme.accent : Qt.alpha(Theme.accent, 0.35)
-
-                            SequentialAnimation on height {
-                                running: mp.playing && mp.visible
-                                loops: Animation.Infinite
-                                NumberAnimation {
-                                    to: 12 + Math.abs(vb.seed) * 24
-                                    duration: 300 + Math.abs(vb.seed) * 500
-                                    easing.type: Easing.InOutSine
-                                }
-                                NumberAnimation {
-                                    to: 6
-                                    duration: 300 + Math.abs(vb.seed) * 500
-                                    easing.type: Easing.InOutSine
-                                }
-                            }
                         }
+                    }
+                }
+
+                // A saltos, como el ecualizador de la barra: sin animaciones a la tasa de refresco
+                Timer {
+                    interval: 140
+                    repeat: true
+                    running: mp.playing && mp.visible && !Theme.gameMode
+                    onTriggered: {
+                        for (let i = 0; i < viz.count; i++)
+                            viz.itemAt(i).height = 6 + Math.round(Math.random() * 30);
+                    }
+                    onRunningChanged: {
+                        if (!running)
+                            for (let i = 0; i < viz.count; i++)
+                                viz.itemAt(i).height = 6;
                     }
                 }
             }

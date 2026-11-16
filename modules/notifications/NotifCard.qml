@@ -61,8 +61,13 @@ CutPanel {
         id: hover
     }
 
+    property var _lastNotif: null
+
     // En un grupo, la tarjeta de arriba se reutiliza al llegar otra de la misma app
     onNotifChanged: {
+        if (notif === card._lastNotif)
+            return;
+        card._lastNotif = notif;
         expire.restart();
         if (animateIn)
             enter.restart();

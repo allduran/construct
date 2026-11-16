@@ -254,11 +254,13 @@ PanelWindow {
                 spacing: 8
                 boundsBehavior: Flickable.StopAtBounds
                 // La más nueva arriba, agrupadas por app (ratón encima: desplegar)
-                model: Notifs.groupByApp(Notifs.list.slice().reverse())
+                model: ScriptModel {
+                    values: Notifs.appsOf(Notifs.list.slice().reverse())
+                }
 
                 delegate: NotifGroup {
-                    required property var modelData
-                    items: modelData.items
+                    required property string modelData
+                    items: Notifs.list.filter(n => Notifs.appKey(n) === modelData).reverse()
                     popup: false
                     width: ListView.view.width
                 }

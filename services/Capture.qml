@@ -84,11 +84,11 @@ Singleton {
         command: ["pgrep", "-x", "wf-recorder"]
         onExited: code => {
             const r = code === 0;
+            if (r !== root.recording)
+                root.recArmed = false;         // ya se vio el cambio (arranque o parada)
             if (r && !root.recording)
                 root.recStart = Date.now();
             root.recording = r;
-            if (r)
-                root.recArmed = false;
         }
     }
     Timer {
@@ -97,7 +97,7 @@ Singleton {
         onTriggered: root.recArmed = false
     }
     Timer {
-        interval: 1000
+        interval: root.recArmed ? 1000 : 2000     // 1 s solo esperando un cambio
         running: root.recording || root.recArmed
         repeat: true
         triggeredOnStart: true

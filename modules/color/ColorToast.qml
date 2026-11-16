@@ -12,8 +12,7 @@ PanelWindow {
 
     property string hex: ""
     property string copied: ""          // formato copiado hace un momento
-    property bool shown: false
-    visible: shown
+    visible: true
 
     screen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name) ?? Quickshell.screens[0]
 
@@ -36,10 +35,16 @@ PanelWindow {
     function show(h: string) {
         hex = h;
         copied = "HEX";
-        shown = true;
         hide.restart();
         enter.restart();
     }
+
+    // Se cierra fuera del handler que lo pide: el LazyLoader destruye esta ventana
+    function close() {
+        Qt.callLater(() => Colors.toastOpen = false);
+    }
+
+    Component.onCompleted: show(Colors.toastHex)
 
     Connections {
         target: Colors
@@ -51,8 +56,8 @@ PanelWindow {
     Timer {
         id: hide
         interval: 6000
-        running: toast.shown && !hov.hovered
-        onTriggered: toast.shown = false
+        running: !hov.hovered
+        onTriggered: toast.close()
     }
     Timer {
         id: copiedReset
@@ -102,7 +107,7 @@ PanelWindow {
                         anchors.margins: -6
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: toast.shown = false
+                        onClicked: toast.close()
                     }
                 }
             }
@@ -247,7 +252,7 @@ PanelWindow {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            toast.shown = false;
+                            toast.close();
                             Colors.pick();
                         }
                     }

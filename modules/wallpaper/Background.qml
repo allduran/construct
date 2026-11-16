@@ -28,6 +28,7 @@ PanelWindow {
     // Dos capas: la nueva entra encima mientras la vieja se queda debajo
     WallImage {
         id: a
+        visible: opacity > 0
         anchors.fill: parent
         filter: Wallpapers.filter
         intensity: Wallpapers.intensity
@@ -41,6 +42,7 @@ PanelWindow {
     }
     WallImage {
         id: b
+        visible: opacity > 0
         anchors.fill: parent
         filter: Wallpapers.filter
         intensity: Wallpapers.intensity
