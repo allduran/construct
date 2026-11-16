@@ -39,9 +39,7 @@ PanelWindow {
     }
     readonly property var current: at(0)
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         Wallpapers.refresh();
         sel = Math.max(0, list.findIndex(w => w.path === Wallpapers.current));
         filter = Wallpapers.filter;
@@ -50,6 +48,10 @@ PanelWindow {
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     function close() {
         ShellState.wallpaperOpen = false;

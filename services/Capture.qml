@@ -20,8 +20,13 @@ Singleton {
         return Hyprland.focusedMonitor ? Hyprland.focusedMonitor.name : "";
     }
 
+    property bool recArmed: false       // acabamos de pedir una grabación
     function run(mode, arg) {
         Quickshell.execDetached([script, mode, arg !== undefined ? arg : monitor()]);
+        if (mode.startsWith("record")) {
+            root.recArmed = true;
+            armTimeout.restart();
+        }
     }
 
     // Abre el selector (si es grabación y ya hay una en marcha, la para)
@@ -82,12 +87,20 @@ Singleton {
             if (r && !root.recording)
                 root.recStart = Date.now();
             root.recording = r;
+            if (r)
+                root.recArmed = false;
         }
     }
     Timer {
-        interval: 2000
-        running: true
+        id: armTimeout
+        interval: 10000                 // si en 10 s no arrancó, dejar de mirar
+        onTriggered: root.recArmed = false
+    }
+    Timer {
+        interval: 1000
+        running: root.recording || root.recArmed
         repeat: true
+        triggeredOnStart: true
         onTriggered: recPoll.running = true
     }
 }

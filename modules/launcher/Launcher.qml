@@ -96,9 +96,7 @@ PanelWindow {
         const m = Math.floor((Date.now() - t) / 60000);
         return m < 1 ? "ahora" : m < 60 ? `${m} min` : m < 1440 ? `${Math.floor(m / 60)} h` : `${Math.floor(m / 1440)} d`;
     }
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         input.text = "";
         sel = 0;
         tab = 0;
@@ -106,6 +104,10 @@ PanelWindow {
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     function close() {
         ShellState.launcherOpen = false;
@@ -117,21 +119,12 @@ PanelWindow {
 
     // Cierra primero y lanza después: la app no hereda el foco del overlay
     function runAfterClose(fn) {
-        pending.fn = fn;
         close();
-        pending.restart();
+        ShellState.runLater(fn);
     }
     function activate(item) {
         if (item)
             runAfterClose(item.run);
-    }
-
-    Timer {
-        id: pending
-        property var fn: null
-        interval: 150
-        onTriggered: if (fn)
-            fn()
     }
 
     // Entrada: parpadeo de monitor + subida + lluvia que aparece

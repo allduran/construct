@@ -72,9 +72,11 @@ Item {
     }
 
     // Encima de todo, recortado a la forma del panel
-    Scanlines {
+    Loader {
         anchors.fill: parent
-        clipPath: root.points
-        visible: root.scanlines
+        active: root.scanlines
+        sourceComponent: Scanlines {
+            clipPath: root.points
+        }
     }
 }

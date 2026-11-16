@@ -31,22 +31,21 @@ PanelWindow {
         id: list
         anchors.fill: parent
         interactive: false
-        // El último en llegar es el último del modelo: de abajo arriba = el más nuevo arriba
-        verticalLayoutDirection: ListView.BottomToTop
-        model: Notifs.tracked
+        // popups ya va del más nuevo al más viejo: el más nuevo arriba, agrupadas por app
+        verticalLayoutDirection: ListView.TopToBottom
+        model: Notifs.groupByApp(Notifs.popups)
 
         delegate: Item {
             id: slot
             required property var modelData
-            readonly property bool shown: Notifs.popups.includes(modelData)
 
             width: list.width
-            height: shown ? card.height + 10 : 0     // los ocultos no ocupan sitio
-            visible: shown
+            height: group.implicitHeight + 10
 
-            NotifCard {
-                id: card
-                notif: slot.modelData
+            NotifGroup {
+                id: group
+                width: slot.width
+                items: slot.modelData.items
                 popup: true
             }
         }

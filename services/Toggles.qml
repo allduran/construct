@@ -3,6 +3,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.common
 
 // Interruptores rápidos: Wi-Fi, Bluetooth, No molestar, luz nocturna
 Singleton {
@@ -33,7 +34,7 @@ Singleton {
             Quickshell.execDetached(["pkill", "-x", "hyprsunset"]);
     }
 
-    // Lee el estado real cada 5 s (por si se cambia desde fuera)
+    // Lee el estado real cada 5 s con AJUSTES abierto (por si se cambia desde fuera)
     Process {
         id: poll
         command: ["sh", "-c", "nmcli radio wifi; " + "bluetoothctl show | grep -q 'Powered: yes' && echo on || echo off; " + "pgrep -x hyprsunset >/dev/null && echo on || echo off"]
@@ -48,9 +49,10 @@ Singleton {
     }
     Timer {
         interval: 5000
-        running: true
+        running: ShellState.settingsOpen    // solo con AJUSTES abierto
         repeat: true
         triggeredOnStart: true
         onTriggered: poll.running = true
     }
+    Component.onCompleted: poll.running = true   // estado inicial
 }

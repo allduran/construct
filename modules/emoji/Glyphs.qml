@@ -41,9 +41,7 @@ PanelWindow {
     onQueryChanged: sel = 0
     onTabChanged: sel = 0
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         input.text = "";
         tab = 0;
         sel = 0;
@@ -51,6 +49,10 @@ PanelWindow {
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     function close() {
         ShellState.emojiOpen = false;

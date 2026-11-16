@@ -98,9 +98,7 @@ PanelWindow {
     readonly property real fw: focusRect?.w ?? 0
     readonly property real fh: focusRect?.h ?? 0
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         dragging = false;
         hovered = null;
         x1 = y1 = x2 = y2 = 0;
@@ -108,6 +106,10 @@ PanelWindow {
         mode = Capture.pendingMode.startsWith("record") ? 3 : 0;
         keys.forceActiveFocus();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     // Ventanas visibles en este monitor, en coordenadas locales (de ancient)
     function windowsHere(): var {

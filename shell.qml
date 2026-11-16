@@ -42,7 +42,14 @@ ShellRoot {
     // Selector ENFOQUE: uno por monitor (como la barra)
     Variants {
         model: Quickshell.screens
-        Focus {}
+        LazyLoader {
+            id: focusLoader
+            required property var modelData
+            active: Capture.selecting
+            Focus {
+                modelData: focusLoader.modelData
+            }
+        }
     }
 
     Variants {
@@ -50,22 +57,49 @@ ShellRoot {
         Background {}
     }
 
-    Launcher {}
-    ControlCenter {}
+    LazyLoader {
+        active: ShellState.launcherOpen
+        Launcher {}
+    }
+    LazyLoader {
+        active: ShellState.controlOpen
+        ControlCenter {}
+    }
     LockScreen {}
-    SessionMenu {}
+    LazyLoader {
+        active: Session.menuOpen
+        SessionMenu {}
+    }
     NotificationPopups {}
     Osd {
         id: osd
     }
 
-    Buffer {}
-    Glyphs {}
-    Reticle {}
-    MediaPanel {}
-    Signal {}
+    LazyLoader {
+        active: ShellState.clipboardOpen
+        Buffer {}
+    }
+    LazyLoader {
+        active: ShellState.emojiOpen
+        Glyphs {}
+    }
+    LazyLoader {
+        active: ShellState.emojiWheelOpen
+        Reticle {}
+    }
+    LazyLoader {
+        active: ShellState.mediaOpen && Media.player !== null
+        MediaPanel {}
+    }
+    LazyLoader {
+        active: ShellState.wallpaperOpen
+        Signal {}
+    }
     ColorToast {}
-    SettingsWindow {}
+    LazyLoader {
+        active: ShellState.settingsOpen
+        SettingsWindow {}
+    }
 
     // duran ipc color_pick
     IpcHandler {

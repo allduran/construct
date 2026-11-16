@@ -33,12 +33,14 @@ PanelWindow {
         ShellState.mediaOpen = false;
     }
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         keys.forceActiveFocus();
         openAnim.restart();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     // Teclado: Espacio play/pausa · ←→ pista · Esc cerrar
     Item {

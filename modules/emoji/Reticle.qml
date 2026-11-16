@@ -40,15 +40,17 @@ PanelWindow {
     readonly property var items: Emoji.wheel
     readonly property var current: hovered >= 0 ? Emoji.find(items[hovered]) : null
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         placed = false;
         hovered = -1;
         needle = -90;
         cursor.running = true;
         Qt.callLater(() => keys.forceActiveFocus());
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     function close() {
         ShellState.emojiWheelOpen = false;

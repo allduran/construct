@@ -32,16 +32,8 @@ PanelWindow {
     // Cerrar y después actuar: así el menú no sale en la pantalla de bloqueo
     // ni se queda "congelado" en pantalla al suspender
     function run(fn) {
-        pending.fn = fn;
         close();
-        pending.restart();
-    }
-    Timer {
-        id: pending
-        property var fn: null
-        interval: 150
-        onTriggered: if (fn)
-            fn()
+        ShellState.runLater(fn);
     }
 
     // Acciones secundarias (las pastillas van aparte)
@@ -63,13 +55,15 @@ PanelWindow {
         },
     ]
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         keys.forceActiveFocus();
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     // ── Teclado ──
     Item {

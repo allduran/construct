@@ -3,6 +3,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Services.Mpris
 import QtQuick
+import qs.common
 
 // Reproductores MPRIS: cuál está activo y sus controles
 Singleton {
@@ -70,7 +71,7 @@ Singleton {
     Timer {
         interval: 1000
         repeat: true
-        running: root.player !== null && root.player.isPlaying
+        running: ShellState.mediaOpen && root.player !== null && root.player.isPlaying
         onTriggered: root.player.positionChanged()
     }
 }

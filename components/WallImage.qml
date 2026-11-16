@@ -7,7 +7,7 @@ import qs.common
 // filter: 0 ORIGINAL · 1 TINTE · 2 FÓSFORO · 3 TERMINAL · intensity: 0–1
 Item {
     id: root
-    property alias source: img.source
+    property url source
     property int filter: 2
     property real intensity: 0.85
     property color tint: Theme.accent
@@ -20,8 +20,10 @@ Item {
         anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
         asynchronous: true
-        // Decodifica al tamaño en pantalla, no al original (un 4K pesa ~32 MB en memoria)
-        sourceSize.width: root.width * 1.5
+        // No cargar hasta conocer el tamaño (sourceSize 0 = decodificar a resolución completa).
+        // Con ancho y alto + PreserveAspectCrop, Qt escala para cubrir: 1920x1080 → ~8 MB.
+        source: root.width > 0 && root.height > 0 ? root.source : ""
+        sourceSize: Qt.size(Math.ceil(root.width), Math.ceil(root.height))
         visible: root.filter === 0
     }
 

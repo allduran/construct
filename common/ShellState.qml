@@ -14,6 +14,24 @@ Singleton {
     property bool wallpaperOpen: false
     property bool settingsOpen: false
 
+    // Ejecuta fn a los 150 ms. Vive aquí (no en el panel) porque el panel
+    // se destruye al cerrarse y se llevaría su propio temporizador.
+    Timer {
+        id: later
+        property var fn: null
+        interval: 150
+        onTriggered: {
+            const f = fn;
+            fn = null;
+            if (f)
+                f();
+        }
+    }
+    function runLater(f): void {
+        later.fn = f;
+        later.restart();
+    }
+
     // Cierra todos los paneles (al abrir uno, los demás se van)
     function closeAll(): void {
         launcherOpen = false;

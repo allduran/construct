@@ -18,6 +18,33 @@ Singleton {
         root.popups = root.popups.filter(p => p !== n);
     }
 
+    function hidePopups(ns) {
+        root.popups = root.popups.filter(p => !ns.includes(p));
+    }
+
+    // Clave de agrupación: la app que la manda
+    function appKey(n): string {
+        return n.appName || n.desktopEntry || "SISTEMA";
+    }
+
+    // [{ app, items }] respetando el orden de 'arr' (la más nueva primero)
+    function groupByApp(arr) {
+        const byApp = {};
+        const out = [];
+        for (const n of arr) {
+            const k = appKey(n);
+            if (!byApp[k]) {
+                byApp[k] = {
+                    app: k,
+                    items: []
+                };
+                out.push(byApp[k]);
+            }
+            byApp[k].items.push(n);
+        }
+        return out;
+    }
+
     function clearAll() {
         const all = server.trackedNotifications.values.slice();
         for (const n of all)
@@ -38,8 +65,19 @@ Singleton {
             root.times[n.id] = Date.now();                        // hora de llegada
             // Con No molestar solo se muestran las críticas (igual se guardan en el escudo)
             const quiet = Toggles.dnd;
-            if (!quiet || n.urgency === NotificationUrgency.Critical)
-                root.popups = [n].concat(root.popups).slice(0, 4);
+            if (!quiet || n.urgency === NotificationUrgency.Critical) {
+                // Como mucho 4 apps a la vez (cada una es un grupo)
+                const apps = [];
+                root.popups = [n].concat(root.popups).filter(p => {
+                    const k = root.appKey(p);
+                    if (apps.includes(k))
+                        return true;
+                    if (apps.length >= 4)
+                        return false;
+                    apps.push(k);
+                    return true;
+                });
+            }
             n.closed.connect(() => root.hidePopup(n));           // si la cierra la app, quitar el popup
         }
     }

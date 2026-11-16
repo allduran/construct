@@ -62,6 +62,13 @@ PanelWindow {
         const back = flip ? a : b;
         back.source = "file://" + path;
         flip = !flip;
+        dropOld.restart();
+    }
+    // Soltar la capa vieja al acabar el fundido (600 ms + margen)
+    Timer {
+        id: dropOld
+        interval: 700
+        onTriggered: (bg.flip ? a : b).source = ""
     }
 
     Component.onCompleted: {

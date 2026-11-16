@@ -77,14 +77,16 @@ PanelWindow {
             Quickshell.execDetached(["sh", "-c", 'pkill -x hyprsunset; setsid hyprsunset -t "$1" >/dev/null 2>&1 &', "sh", String(k)]);
     }
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         keys.forceActiveFocus();
         cursorScan.running = true;
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     Item {
         id: keys

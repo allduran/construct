@@ -13,6 +13,9 @@ CutPanel {
     id: card
     required property var notif
     property bool popup: true
+    property bool animateIn: popup       // parpadeo de entrada (no en las que se despliegan de un grupo)
+    property var group: null             // notificaciones de su grupo: al caducar se ocultan todas
+    property bool held: false            // el grupo está desplegado: no caduca
 
     readonly property bool critical: notif.urgency === NotificationUrgency.Critical
     readonly property color tone: critical ? Theme.magenta : notif.urgency === NotificationUrgency.Low ? Theme.textDim : Theme.accent
@@ -58,10 +61,18 @@ CutPanel {
         id: hover
     }
 
+    // En un grupo, la tarjeta de arriba se reutiliza al llegar otra de la misma app
+    onNotifChanged: {
+        expire.restart();
+        if (animateIn)
+            enter.restart();
+    }
+
     Timer {
+        id: expire
         interval: card.notif.expireTimeout > 0 ? card.notif.expireTimeout : 6000
-        running: card.popup && !card.critical && !hover.hovered
-        onTriggered: Notifs.hidePopup(card.notif)
+        running: card.popup && !card.critical && !hover.hovered && !card.held
+        onTriggered: Notifs.hidePopups(card.group ?? [card.notif])
     }
 
     ColumnLayout {
@@ -192,7 +203,7 @@ CutPanel {
     transform: Translate {
         id: shift
     }
-    Component.onCompleted: if (popup)
+    Component.onCompleted: if (animateIn)
         enter.restart()
 
     ParallelAnimation {

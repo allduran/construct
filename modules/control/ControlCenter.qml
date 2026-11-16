@@ -32,14 +32,16 @@ PanelWindow {
         ShellState.controlOpen = false;
     }
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         calendar.offset = 0;
         keys.forceActiveFocus();
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     // Esc cierra
     Item {
@@ -172,7 +174,7 @@ PanelWindow {
                     Text {
                         width: parent.width
                         wrapMode: Text.Wrap
-                        text: Verse.available ? "«" + Verse.text + "»" : "añade tu RVR1960 en ~/.local/share/construct/biblia/rvr1960.json"
+                        text: Verse.available ? "«" + Verse.text + "»" : "falta data/verses.json · genéralo con scripts/gen-verses.py"
                         color: Verse.available ? Theme.textBright : Theme.textDim
                         font.family: Theme.fontMono
                         font.pixelSize: Verse.available ? Theme.fsMd : Theme.fsXs
@@ -251,12 +253,12 @@ PanelWindow {
                 clip: true
                 spacing: 8
                 boundsBehavior: Flickable.StopAtBounds
-                // La más nueva arriba
-                model: Notifs.list.slice().reverse()
+                // La más nueva arriba, agrupadas por app (ratón encima: desplegar)
+                model: Notifs.groupByApp(Notifs.list.slice().reverse())
 
-                delegate: NotifCard {
+                delegate: NotifGroup {
                     required property var modelData
-                    notif: modelData
+                    items: modelData.items
                     popup: false
                     width: ListView.view.width
                 }

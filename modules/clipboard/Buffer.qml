@@ -55,9 +55,7 @@ PanelWindow {
         return k === "TODO" ? Clipboard.entries.length : Clipboard.entries.filter(e => e.kind === k).length;
     }
 
-    onVisibleChanged: {
-        if (!visible)
-            return;
+    function opened() {
         Clipboard.refresh();
         input.text = "";
         sel = 0;
@@ -66,6 +64,10 @@ PanelWindow {
         openAnim.restart();
         title.glitch();
     }
+    onVisibleChanged: if (visible)
+        opened()
+    Component.onCompleted: if (visible)
+        opened()
 
     function close() {
         ShellState.clipboardOpen = false;
@@ -81,8 +83,7 @@ PanelWindow {
         if (!e)
             return;
         close();
-        pending.fn = () => Clipboard.use(e, andPaste);
-        pending.restart();
+        ShellState.runLater(() => Clipboard.use(e, andPaste));
     }
     function openLink() {
         const url = current?.text.trim() ?? "";
@@ -90,14 +91,6 @@ PanelWindow {
             return;
         close();
         Quickshell.execDetached(["xdg-open", url]);
-    }
-
-    Timer {
-        id: pending
-        property var fn: null
-        interval: 150
-        onTriggered: if (fn)
-            fn()
     }
 
     // ── Botón de acción del pie de la vista previa ──
@@ -644,6 +637,7 @@ PanelWindow {
                                 visible: buf.current?.kind === "IMAGEN"
                                 anchors.fill: parent
                                 source: visible ? Clipboard.thumb(buf.current) : ""
+                                sourceSize: Qt.size(Math.ceil(width), Math.ceil(height))
                                 fillMode: Image.PreserveAspectFit
                                 horizontalAlignment: Image.AlignLeft
                                 verticalAlignment: Image.AlignTop

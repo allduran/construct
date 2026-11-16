@@ -3,6 +3,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.common
 
 // Emojis: lista (assets/emoji.json, emojibase en español) + los más usados
 Singleton {
@@ -64,9 +65,14 @@ Singleton {
         onTriggered: Quickshell.execDetached(["sh", "-c", "printf '%s' \"$1\" | wl-copy || exit; [ \"$2\" = 1 ] || exit 0; sleep 0.1; " + "case \"$(hyprctl activewindow -j | jq -r .class)\" in " + "foot|kitty|Alacritty|org.wezfurlong.wezterm|com.mitchellh.ghostty|org.kde.konsole) wtype -M ctrl -M shift v -m shift -m ctrl ;; " + "*) wtype -M ctrl v -m ctrl ;; esac", "sh", emoji, andType ? "1" : "0"])
     }
 
+    // La lista completa se carga la primera vez que se abre GLIFOS o la retícula
+    readonly property bool wantedNow: ShellState.emojiOpen || ShellState.emojiWheelOpen
+    property bool wanted: false
+    onWantedNowChanged: if (wantedNow)
+        wanted = true
+
     FileView {
-        path: Quickshell.shellDir + "/assets/emoji.json"
-        blockLoading: true
+        path: root.wanted ? Quickshell.shellDir + "/assets/emoji.json" : ""
         onLoaded: {
             try {
                 root.all = JSON.parse(text());
